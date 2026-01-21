@@ -1,43 +1,55 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid7
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.exceptions.product import (
+    IncorretQuantityValue,
+    ProductIsNotAvailable,
+    ProductNotFound,
+)
 
-from app.exceptions.product import ProductIsNotAvailable, ProductNotFound
+from app.services.cart import CartService
 from domain.entities.cart import CartItem
-from infrastructure.database.models.cart import CartItemModel
-from infrastructure.repositories.cart.base import BaseCartItemRepository
+
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.cart.base import BaseCartRepository
 from infrastructure.repositories.product.base import BaseProductRepository
 
 
 @dataclass(frozen=True, eq=False)
-class AddItemToCartQuery:
+class AddItemToCartCommand:
     user_id: UUID
     product_id: UUID
+    quantity: int
 
 
 class AddItemToCartInetractor:
     def __init__(
         self,
-        session: AsyncSession,
+        transaction_manager: TransactionManager,
         product_repository: BaseProductRepository,
-        cart_item_repository: BaseCartItemRepository,
+        cart_service: CartService,
+        cart_repository: BaseCartRepository,
     ) -> None:
-        self._session = session
+        self._transaction_manager = transaction_manager
         self._product_repository = product_repository
-        self._cart_item_repository = cart_item_repository
+        self._cart_repository = cart_repository
+        self._cart_service = cart_service
 
-    async def __call__(self, data: AddItemToCartQuery) -> None:
+    async def __call__(self, data: AddItemToCartCommand) -> CartItem:
+        if data.quantity >= 5:
+            raise IncorretQuantityValue()
+
+        cart = await self._cart_service.get_cart_by_user_id(data.user_id)
+
         product = await self._product_repository.get_by_id(product_id=data.product_id)
         if product is None:
             raise ProductNotFound(product_id=data.product_id)
-        if product.is_available is None:
+        if not product.is_available:
             raise ProductIsNotAvailable(product_name=product.name)
 
-        cart_item = CartItem(
-            id=uuid7(),
-            user_id=data.user_id,
-            product_id=product.id,
+        cart_item = await self._cart_service.add_product_to_cart(
+            cart_id=cart.id, product_id=data.product_id, quantity=data.quantity
         )
 
-        await self._cart_item_repository.create(cart_item)
+        await self._transaction_manager.commit()
+        return cart_item

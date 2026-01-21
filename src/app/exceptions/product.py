@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from app.exceptions.base import AppErrorCode, AppException
 
 
@@ -23,4 +24,12 @@ class ProductIsNotInCart(AppException):
         super().__init__(
             message=f"Товар {cart_item_id} не находится в корзине.",
             error_code=AppErrorCode.PRODUCT_IS_NOT_IN_CART,
+        )
+
+
+class IncorretQuantityValue(AppException):
+    def __init__(self) -> None:
+        super().__init(
+            message="Количество продукта слишком большое.",
+            error_code=AppErrorCode.INCORRECT_PRODUCT_QUANTITY,
         )

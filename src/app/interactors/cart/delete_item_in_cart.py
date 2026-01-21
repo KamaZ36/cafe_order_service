@@ -1,16 +1,21 @@
+from dataclasses import dataclass
 from uuid import UUID
 
-from app.exceptions.product import ProductIsNotInCart
-from infrastructure.repositories.cart.base import BaseCartItemRepository
+from app.services.cart import CartService
+
+
+@dataclass(frozen=True, eq=False)
+class DeleteItemInCartCommand:
+    user_id: UUID
+    cart_id: UUID
+    item_id: UUID
 
 
 class DeleteItemInCart:
-    def __init__(self, cart_item_repository: BaseCartItemRepository) -> None:
-        self._cart_item_repository = cart_item_repository
+    def __init__(self, cart_service: CartService) -> None:
+        self._cart_service = cart_service
 
-    async def __call__(self, cart_item_id: UUID) -> None:
-        cart_item = await self._cart_item_repository.get_by_id(cart_item_id)
-        if cart_item is None:
-            raise ProductIsNotInCart()
-
-        await self._cart_item_repository.delete(cart_item_id)
+    async def __call__(self, data: DeleteItemInCartCommand) -> None:
+        await self._cart_service.delete_item_in_cart(
+            cart_id=data.cart_id, item_id=data.cart_id
+        )
