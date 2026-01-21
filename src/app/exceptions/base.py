@@ -5,6 +5,7 @@ class AppErrorCode(str, Enum):
     # Продукты
     PRODUCT_NOT_FOUND = "PRODUCT_NOT_FOUND"
     PRODUCT_IS_NOT_AVAILABLE = "PRODUCT_IS_NOT_AVAILABLE"
+    PRODUCT_IS_NOT_IN_CART = "PRODUCT_IS_NOT_IN_CART"
 
 
 class AppException(Exception):

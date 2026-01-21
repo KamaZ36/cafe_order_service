@@ -16,3 +16,11 @@ class ProductIsNotAvailable(AppException):
             message=f"Продукт '{product_name}' сейчас недоступен или закончился.",
             error_code=AppErrorCode.PRODUCT_IS_NOT_AVAILABLE,
         )
+
+
+class ProductIsNotInCart(AppException):
+    def __init__(self, cart_item_id: UUID) -> None:
+        super().__init__(
+            message=f"Товар {cart_item_id} не находится в корзине.",
+            error_code=AppErrorCode.PRODUCT_IS_NOT_IN_CART,
+        )
