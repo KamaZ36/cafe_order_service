@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class AppErrorCode(str, Enum):
+    # Пользователи
+    USER_ALREADY_EXIST = "USER_ALREADY_EXIST"
+
     # Продукты
     PRODUCT_NOT_FOUND = "PRODUCT_NOT_FOUND"
     PRODUCT_IS_NOT_AVAILABLE = "PRODUCT_IS_NOT_AVAILABLE"

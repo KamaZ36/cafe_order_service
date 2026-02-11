@@ -1,12 +1,14 @@
-from uuid import UUID
+from sqlalchemy import Table, Column, UUID, String
 
-from sqlalchemy.orm import Mapped, mapped_column
+from src.domain.entities.category import Category
+from src.infrastructure.database.models.base import mapper_registry
 
-from models.base import BaseModel
 
+CATEGORY_TABLE = Table(
+    "categories",
+    mapper_registry.metadata,
+    Column("id", UUID, primary_key=True, unique=True),
+    Column("name", String, nullable=False, unique=True),
+)
 
-class CategoryModel(BaseModel):
-    __tablename__ = "categories"
-
-    id: Mapped[UUID] = mapped_column(primary_key=True, unique=True)
-    name: Mapped[str] = mapped_column(nullable=False, unique=True)
+mapper_registry.map_imperatively(Category, CATEGORY_TABLE)

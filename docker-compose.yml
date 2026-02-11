@@ -1,0 +1,67 @@
+services:
+
+  api:
+    container_name: api
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./src:/src/src
+    networks:
+      - backend_network
+    env_file:
+      - ./.env
+    command: "poetry run uvicorn --factory src.api.main:create_app --reload --host 0.0.0.0 --port 8000"
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy  
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18.1
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql 
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "database"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis: 
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
+  redis_data:
+
+networks:
+  backend_network:
+    name: backend_network
+    driver: bridge

@@ -1,14 +1,15 @@
-from uuid import UUID
+from dataclasses import dataclass
 
-from app.dtos.cart import ResponseCartDTO
-from app.services.cart import CartService
+from src.app.dtos.cart import ResponseCartDTO
+from src.app.services.cart import CartService
+from src.app.interactors.common import AuthenticatedCommand
 
-from infrastructure.database.transaction_manager.base import TransactionManager
+from src.infrastructure.database.transaction_manager.base import TransactionManager
 
 
-class CreateCartCommand:
-    user_id: UUID | None
-    session_id: UUID | None
+@dataclass(frozen=True, eq=False)
+class GetCartQuery(AuthenticatedCommand):
+    pass
 
 
 class GetOrCreateCartInteractor:
@@ -20,16 +21,10 @@ class GetOrCreateCartInteractor:
         self._cart_service = cart_service
         self._transaction_manager = transaction_manager
 
-    async def __call__(self, data: CreateCartCommand) -> ResponseCartDTO:
+    async def __call__(self, data: GetCartQuery) -> ResponseCartDTO:
         cart = await self._cart_service.get_cart_by_user_id(data.user_id)
-        cart_items = await self._cart_service.get_cart_items(cart_id=cart.id)
 
-        cart_dto = ResponseCartDTO(
-            id=cart.id,
-            items=cart_items,
-            created_at=cart.created_at,
-            updated_at=cart.updated_at,
-        )
+        cart_dto = ResponseCartDTO(id=cart.id, items=cart.get_items)
 
         await self._transaction_manager.commit()
         return cart_dto

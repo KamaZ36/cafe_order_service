@@ -3,6 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 
+@dataclass(kw_only=True)
 class Order:
     id: UUID
     order_number: str

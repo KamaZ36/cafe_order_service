@@ -1,8 +1,15 @@
-from uuid import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, Table, UUID, String
 
-from models.base import BaseModel
+from src.domain.entities.user import User
+from src.infrastructure.database.models.base import mapper_registry
 
 
-class Base(BaseModel):
-    id: Mapped[UUID] = mapped_column(primary_key=True, unique=True)
+USER_TABLE = Table(
+    "users",
+    mapper_registry.metadata,
+    Column("id", UUID, primary_key=True, unique=True),
+    Column("phone_number", String, unique=True),
+)
+
+
+mapper_registry.map_imperatively(User, USER_TABLE)

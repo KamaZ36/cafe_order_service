@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from app.exceptions.base import AppErrorCode, AppException
+from src.app.exceptions.base import AppErrorCode, AppException
 
 
 class ProductNotFound(AppException):

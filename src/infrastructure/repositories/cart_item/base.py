@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from domain.entities.cart import CartItem
+from src.domain.entities.cart import CartItem
 
 
 class BaseCartItemRepository(ABC):
