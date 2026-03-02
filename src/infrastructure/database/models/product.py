@@ -13,6 +13,7 @@ PRODUCT_TABLE = Table(
     Column("weight", String, nullable=True),
     Column("category_id", UUID, ForeignKey("categories.id")),
     Column("price", DECIMAL(precision=10, scale=2), nullable=False),
+    Column("image", String, nullable=True, server_default=None),
     Column("is_available", Boolean, server_default="True"),
     Column("is_popular", Boolean, server_default="False"),
     Column("is_new", Boolean, server_default="False"),

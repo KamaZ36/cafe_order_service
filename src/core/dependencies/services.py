@@ -1,5 +1,7 @@
 from dishka import Provider, provide, Scope
 
+from src.app.services.product import ProductService
+from src.infrastructure.file_storage.base import BaseFileStorage
 from src.infrastructure.database.transaction_manager.base import TransactionManager
 from src.infrastructure.repositories.session.base import BaseSessionRepository
 from src.infrastructure.repositories.cart.base import BaseCartRepository
@@ -25,3 +27,7 @@ class ServicesProvider(Provider):
     @provide
     def get_cart_service(self, cart_repository: BaseCartRepository) -> CartService:
         return CartService(cart_repository)
+
+    @provide
+    def get_product_service(self, file_storage: BaseFileStorage) -> ProductService:
+        return ProductService(file_storage)

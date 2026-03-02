@@ -33,3 +33,11 @@ class IncorretQuantityValue(AppException):
             message="Количество продукта слишком большое.",
             error_code=AppErrorCode.INCORRECT_PRODUCT_QUANTITY,
         )
+
+
+class ProductWithNameAlreadyExist(AppException):
+    def __init__(self) -> None:
+        super().__init__(
+            message="Товар с таким именем уже существует.",
+            error_code=AppErrorCode.PRODUCT_WITH_NAME_ALREADY_EXIST,
+        )

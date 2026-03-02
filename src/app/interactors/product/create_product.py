@@ -2,6 +2,9 @@ from dataclasses import dataclass
 from decimal import Decimal
 from uuid import UUID, uuid7
 
+from src.app.exceptions.product import ProductWithNameAlreadyExist
+from src.app.dtos.file import FileDTO
+from src.app.services.product import ProductService
 from src.domain.entities.product import Product
 
 from src.app.interactors.common import AuthenticatedCommand
@@ -10,7 +13,7 @@ from src.infrastructure.database.transaction_manager.base import TransactionMana
 from src.infrastructure.repositories.product.base import BaseProductRepository
 
 
-@dataclass(frozen=True, eq=False)
+@dataclass(frozen=True, eq=False, kw_only=True)
 class CreateProductCommand(AuthenticatedCommand):
     name: str
     description: str
@@ -20,6 +23,7 @@ class CreateProductCommand(AuthenticatedCommand):
     is_available: bool = True
     is_popular: bool = False
     is_new: bool = False
+    file: FileDTO
 
 
 class CreateProductInteractor:
@@ -27,11 +31,18 @@ class CreateProductInteractor:
         self,
         product_repository: BaseProductRepository,
         transaction_manager: TransactionManager,
+        product_service: ProductService,
     ) -> None:
+        self._product_service = product_service
         self._product_repository = product_repository
         self._transaction_manager = transaction_manager
 
     async def __call__(self, command: CreateProductCommand) -> Product:
+
+        is_exist = self._product_repository.check_exist_by_name(command.name)
+        if is_exist:
+            raise ProductWithNameAlreadyExist()
+
         product = Product(
             id=uuid7(),
             name=command.name,
@@ -43,6 +54,13 @@ class CreateProductInteractor:
             is_popular=command.is_popular,
             is_new=command.is_new,
         )
+
+        file_key = await self._product_service.save_product_image(
+            image=command.file, product_id=product.id
+        )
+
+        product.set_image(file_key)
+
         await self._product_repository.create(product)
         await self._transaction_manager.commit()
 
