@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.domain.entities.cart_item import CartItem
-
 from src.app.exceptions.product import (
     IncorretQuantityValue,
     ProductIsNotAvailable,

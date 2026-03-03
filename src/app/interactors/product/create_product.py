@@ -39,7 +39,7 @@ class CreateProductInteractor:
 
     async def __call__(self, command: CreateProductCommand) -> Product:
 
-        is_exist = self._product_repository.check_exist_by_name(command.name)
+        is_exist = await self._product_repository.check_exist_by_name(command.name)
         if is_exist:
             raise ProductWithNameAlreadyExist()
 

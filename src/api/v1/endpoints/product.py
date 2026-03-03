@@ -5,6 +5,11 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, HTTPException, UploadFile, Form
 from fastapi.responses import JSONResponse
 
+from src.app.interactors.product.get_product import (
+    GetProductByIdInteractor,
+    GetProductByIdQuery,
+)
+from src.app.dtos.product import ResponseProductDTO
 from src.app.interactors.product.delete_product import (
     DeleteProductCommand,
     DeleteProductInteractor,
@@ -53,6 +58,17 @@ async def create_product(
     async with container() as context:
         interactor = await context.get(CreateProductInteractor)
         product = await interactor(command)
+
+    return product
+
+
+@router.get("/{product_id}", description="Получить информацию о товаре по его ID")
+async def get_product_by_id(product_id: UUID) -> ResponseProductDTO:
+    query = GetProductByIdQuery(product_id=product_id)
+
+    async with container() as context:
+        interactor = await context.get(GetProductByIdInteractor)
+        product = await interactor(query)
 
     return product
 
