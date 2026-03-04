@@ -1,13 +1,13 @@
 from dishka import Provider, provide, Scope
 
-from src.app.services.product import ProductService
-from src.infrastructure.file_storage.base import BaseFileStorage
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.repositories.session.base import BaseSessionRepository
-from src.infrastructure.repositories.cart.base import BaseCartRepository
-from src.app.services.cart import CartService
+from app.services.product import ProductService
+from infrastructure.file_storage.base import BaseFileStorage
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.session.base import BaseSessionRepository
+from infrastructure.repositories.cart.base import BaseCartRepository
+from app.services.cart import CartService
 
-from src.api.auth.auth_service import AuthService
+from api.auth.auth_service import AuthService
 
 
 class ServicesProvider(Provider):

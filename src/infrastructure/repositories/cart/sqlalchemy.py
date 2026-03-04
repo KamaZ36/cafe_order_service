@@ -3,9 +3,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.entities.cart import Cart
+from domain.entities.cart import Cart
 
-from src.infrastructure.repositories.cart.base import BaseCartRepository
+from infrastructure.repositories.cart.base import BaseCartRepository
 
 
 class SQLAlchemyCartRepository(BaseCartRepository):

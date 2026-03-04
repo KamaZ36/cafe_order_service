@@ -1,8 +1,8 @@
 from sqlalchemy import Table, Column, UUID, func, DateTime
 from sqlalchemy.dialects.postgresql import INET
 
-from src.api.auth.model import AuthSession
-from src.infrastructure.database.models.base import mapper_registry
+from api.auth.model import AuthSession
+from infrastructure.database.models.base import mapper_registry
 
 
 AUTH_SESSION_TABLE = Table(

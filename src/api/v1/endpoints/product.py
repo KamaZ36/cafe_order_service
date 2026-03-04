@@ -5,24 +5,24 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, HTTPException, UploadFile, Form
 from fastapi.responses import JSONResponse
 
-from src.app.interactors.product.get_product import (
+from app.interactors.product.get_product import (
     GetProductByIdInteractor,
     GetProductByIdQuery,
 )
-from src.app.dtos.product import ResponseProductDTO
-from src.app.interactors.product.delete_product import (
+from app.dtos.product import ResponseProductDTO
+from app.interactors.product.delete_product import (
     DeleteProductCommand,
     DeleteProductInteractor,
 )
-from src.app.dtos.file import FileDTO
-from src.domain.entities.product import Product
+from app.dtos.file import FileDTO
+from domain.entities.product import Product
 
-from src.app.interactors.product.create_product import (
+from app.interactors.product.create_product import (
     CreateProductCommand,
     CreateProductInteractor,
 )
 
-from src.core.dependencies import container
+from core.dependencies import container
 
 router = APIRouter()
 

@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.app.exceptions.product import ProductNotFound
-from src.app.interactors.common import AuthenticatedCommand
+from app.exceptions.product import ProductNotFound
+from app.interactors.common import AuthenticatedCommand
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.file_storage.base import BaseFileStorage
-from src.infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.file_storage.base import BaseFileStorage
+from infrastructure.repositories.product.base import BaseProductRepository
 
 
 @dataclass(frozen=True, eq=False)

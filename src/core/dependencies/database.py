@@ -3,11 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator
 from dishka import Provider, provide, Scope
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.database.transaction_manager.sqlalchemy_manager import (
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.database.transaction_manager.sqlalchemy_manager import (
     SQLAlchemyTransactionManager,
 )
-from src.infrastructure.database.connection import async_session_maker
+from infrastructure.database.connection import async_session_maker
 
 
 class DatabaseProvider(Provider):

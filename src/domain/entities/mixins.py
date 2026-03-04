@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from src.utils import get_datetime_utc_now
+from utils import get_datetime_utc_now
 
 
 @dataclass

@@ -3,9 +3,9 @@ from uuid import UUID
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.infrastructure.database.models.user import USER_TABLE
-from src.domain.entities.user import User
-from src.infrastructure.repositories.user.base import BaseUserRepository
+from infrastructure.database.models.user import USER_TABLE
+from domain.entities.user import User
+from infrastructure.repositories.user.base import BaseUserRepository
 
 
 class SQLAlchemyUserRepository(BaseUserRepository):

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
-from src.utils import get_datetime_utc_now
+from utils import get_datetime_utc_now
 
 
 @dataclass(eq=False)

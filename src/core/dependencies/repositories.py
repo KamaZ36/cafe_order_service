@@ -2,23 +2,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from dishka import Provider, provide, Scope
 
-from src.infrastructure.repositories.session.base import BaseSessionRepository
-from src.infrastructure.repositories.category.base import BaseCategoryRepository
-from src.infrastructure.repositories.product.base import BaseProductRepository
-from src.infrastructure.repositories.cart.base import BaseCartRepository
-from src.infrastructure.repositories.user.base import BaseUserRepository
+from infrastructure.repositories.session.base import BaseSessionRepository
+from infrastructure.repositories.category.base import BaseCategoryRepository
+from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.cart.base import BaseCartRepository
+from infrastructure.repositories.user.base import BaseUserRepository
 
-from src.infrastructure.repositories.session.sqlalchemy import (
+from infrastructure.repositories.session.sqlalchemy import (
     SQLAlchemySessionRepository,
 )
-from src.infrastructure.repositories.category.sqlalchemy import (
+from infrastructure.repositories.category.sqlalchemy import (
     SQLAlchemyCategoryRepository,
 )
-from src.infrastructure.repositories.product.sqlalchemy import (
+from infrastructure.repositories.product.sqlalchemy import (
     SQLAlchemyProductRepository,
 )
-from src.infrastructure.repositories.cart.sqlalchemy import SQLAlchemyCartRepository
-from src.infrastructure.repositories.user.sqlalchemy import SQLAlchemyUserRepository
+from infrastructure.repositories.cart.sqlalchemy import SQLAlchemyCartRepository
+from infrastructure.repositories.user.sqlalchemy import SQLAlchemyUserRepository
 
 
 class RepositoriesProvider(Provider):

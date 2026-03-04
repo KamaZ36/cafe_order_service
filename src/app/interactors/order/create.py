@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.app.interactors.common import AuthenticatedCommand
+from app.interactors.common import AuthenticatedCommand
 
 
 @dataclass(frozen=True, eq=False)

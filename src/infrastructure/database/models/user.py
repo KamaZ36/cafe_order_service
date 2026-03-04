@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Table, UUID, String
 
-from src.domain.entities.user import User
-from src.infrastructure.database.models.base import mapper_registry
+from domain.entities.user import User
+from infrastructure.database.models.base import mapper_registry
 
 
 USER_TABLE = Table(

@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from datetime import datetime
 from uuid import UUID
 
-from src.domain.entities.cart_item import CartItem
+from domain.entities.cart_item import CartItem
 
 
 @dataclass(frozen=True, eq=False)

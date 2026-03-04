@@ -1,8 +1,8 @@
 from sqlalchemy import Table, Column, UUID, DECIMAL, String, Integer, ForeignKey
 
-from src.domain.entities.order import Order
-from src.domain.entities.order_item import OrderItem
-from src.infrastructure.database.models.base import mapper_registry
+from domain.entities.order import Order
+from domain.entities.order_item import OrderItem
+from infrastructure.database.models.base import mapper_registry
 
 
 ORDER_TABLE = Table(

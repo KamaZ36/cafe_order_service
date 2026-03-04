@@ -3,8 +3,8 @@ from uuid import UUID
 
 from fastapi import Depends, Request, HTTPException, status
 
-from src.infrastructure.repositories.session.base import BaseSessionRepository
-from src.core.dependencies import container
+from infrastructure.repositories.session.base import BaseSessionRepository
+from core.dependencies import container
 
 
 async def get_current_user_ip_address(request: Request) -> str:

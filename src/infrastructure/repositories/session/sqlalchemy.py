@@ -2,8 +2,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.auth.model import AuthSession
-from src.infrastructure.repositories.session.base import BaseSessionRepository
+from api.auth.model import AuthSession
+from infrastructure.repositories.session.base import BaseSessionRepository
 
 
 class SQLAlchemySessionRepository(BaseSessionRepository):

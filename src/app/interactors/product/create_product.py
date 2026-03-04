@@ -2,15 +2,15 @@ from dataclasses import dataclass
 from decimal import Decimal
 from uuid import UUID, uuid7
 
-from src.app.exceptions.product import ProductWithNameAlreadyExist
-from src.app.dtos.file import FileDTO
-from src.app.services.product import ProductService
-from src.domain.entities.product import Product
+from app.exceptions.product import ProductWithNameAlreadyExist
+from app.dtos.file import FileDTO
+from app.services.product import ProductService
+from domain.entities.product import Product
 
-from src.app.interactors.common import AuthenticatedCommand
+from app.interactors.common import AuthenticatedCommand
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.product.base import BaseProductRepository
 
 
 @dataclass(frozen=True, eq=False, kw_only=True)

@@ -1,9 +1,9 @@
 from uuid import UUID, uuid4
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.repositories.session.base import BaseSessionRepository
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.session.base import BaseSessionRepository
 
-from src.api.auth.model import AuthSession
+from api.auth.model import AuthSession
 
 
 class AuthService:

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from src.app.dtos.cart import ResponseCartDTO
-from src.app.services.cart import CartService
-from src.app.interactors.common import AuthenticatedCommand
+from app.dtos.cart import ResponseCartDTO
+from app.services.cart import CartService
+from app.interactors.common import AuthenticatedCommand
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.database.transaction_manager.base import TransactionManager
 
 
 @dataclass(frozen=True, eq=False)

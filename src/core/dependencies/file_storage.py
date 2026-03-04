@@ -1,7 +1,7 @@
 from dishka import Provider, provide, Scope
 
-from src.infrastructure.file_storage.local import LocalFileStorage
-from src.infrastructure.file_storage.base import BaseFileStorage
+from infrastructure.file_storage.local import LocalFileStorage
+from infrastructure.file_storage.base import BaseFileStorage
 
 
 class FileStorageProvider(Provider):

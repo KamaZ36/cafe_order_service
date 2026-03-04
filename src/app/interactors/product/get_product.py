@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.app.exceptions.product import ProductNotFound
-from src.app.dtos.product import ResponseProductDTO
+from app.exceptions.product import ProductNotFound
+from app.dtos.product import ResponseProductDTO
 
-from src.infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import BaseProductRepository
 
 
 @dataclass(frozen=True, eq=False)

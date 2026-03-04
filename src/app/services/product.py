@@ -1,8 +1,8 @@
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from src.app.dtos.file import FileDTO
-from src.infrastructure.file_storage.base import BaseFileStorage
+from app.dtos.file import FileDTO
+from infrastructure.file_storage.base import BaseFileStorage
 
 
 class ProductService:

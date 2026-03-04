@@ -2,10 +2,10 @@ from sqlalchemy import Table, Column, UUID, DateTime, Integer, ForeignKey, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.collections import attribute_keyed_dict
 
-from src.domain.entities.cart import Cart
-from src.domain.entities.cart_item import CartItem
+from domain.entities.cart import Cart
+from domain.entities.cart_item import CartItem
 
-from src.infrastructure.database.models.base import mapper_registry
+from infrastructure.database.models.base import mapper_registry
 
 
 CART_TABLE = Table(

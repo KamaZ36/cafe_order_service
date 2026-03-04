@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid7
 
-from src.domain.entities.user import User
+from domain.entities.user import User
 
-from src.app.exceptions.user import UserAlreadyExist
+from app.exceptions.user import UserAlreadyExist
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.repositories.user.base import BaseUserRepository
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.user.base import BaseUserRepository
 
 
 @dataclass

@@ -1,12 +1,12 @@
 from dishka import Provider, provide, Scope
 
-from src.app.interactors.product.get_product import GetProductByIdInteractor
-from src.app.interactors.product.delete_product import DeleteProductInteractor
-from src.app.interactors.category.create_category import CreateCategoryInteractor
-from src.app.interactors.product.create_product import CreateProductInteractor
-from src.app.interactors.cart.add_item_to_cart import AddItemToCartInetractor
-from src.app.interactors.cart.get_cart import GetOrCreateCartInteractor
-from src.app.interactors.user.create_user import CreateUserInteractor
+from app.interactors.product.get_product import GetProductByIdInteractor
+from app.interactors.product.delete_product import DeleteProductInteractor
+from app.interactors.category.create_category import CreateCategoryInteractor
+from app.interactors.product.create_product import CreateProductInteractor
+from app.interactors.cart.add_item_to_cart import AddItemToCartInetractor
+from app.interactors.cart.get_cart import GetOrCreateCartInteractor
+from app.interactors.user.create_user import CreateUserInteractor
 
 
 class InteractorsProvider(Provider):

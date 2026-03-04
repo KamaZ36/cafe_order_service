@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from uuid import UUID, uuid7
 
-from src.domain.entities.cart_item import CartItem
-from src.domain.entities.mixins import CreatedAtMixin, UpdatedAtMixin
+from domain.entities.cart_item import CartItem
+from domain.entities.mixins import CreatedAtMixin, UpdatedAtMixin
 
 
 @dataclass(kw_only=True)

@@ -1,7 +1,7 @@
 from sqlalchemy import Table, Column, UUID, String
 
-from src.domain.entities.category import Category
-from src.infrastructure.database.models.base import mapper_registry
+from domain.entities.category import Category
+from infrastructure.database.models.base import mapper_registry
 
 
 CATEGORY_TABLE = Table(

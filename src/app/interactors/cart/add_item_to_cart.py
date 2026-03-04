@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.app.exceptions.product import (
+from app.exceptions.product import (
     IncorretQuantityValue,
     ProductIsNotAvailable,
     ProductNotFound,
 )
-from src.app.services.cart import CartService
-from src.app.interactors.common import AuthenticatedCommand
+from app.services.cart import CartService
+from app.interactors.common import AuthenticatedCommand
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.repositories.cart.base import BaseCartRepository
-from src.infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.cart.base import BaseCartRepository
+from infrastructure.repositories.product.base import BaseProductRepository
 
 
 @dataclass(frozen=True, eq=False)

@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 
-from src.domain.entities.category import Category
+from domain.entities.category import Category
 
-from src.app.interactors.category.create_category import (
+from app.interactors.category.create_category import (
     CreateCategoryCommand,
     CreateCategoryInteractor,
 )
 
-from src.api.v1.schemas.category import CreateCategorySchema
-from src.core.dependencies import container
+from api.v1.schemas.category import CreateCategorySchema
+from core.dependencies import container
 
 
 router = APIRouter()

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from src.api.auth.model import AuthSession
+from api.auth.model import AuthSession
 
 
 class BaseSessionRepository(ABC):

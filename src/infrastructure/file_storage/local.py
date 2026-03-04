@@ -5,7 +5,7 @@ from anyio import Path as AsyncPath, to_thread
 
 from typing import BinaryIO
 
-from src.infrastructure.file_storage.base import BaseFileStorage
+from infrastructure.file_storage.base import BaseFileStorage
 
 
 class LocalFileStorage(BaseFileStorage):

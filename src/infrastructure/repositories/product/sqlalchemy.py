@@ -3,10 +3,10 @@ from uuid import UUID
 from sqlalchemy import delete, exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.entities.product import Product
+from domain.entities.product import Product
 
-from src.infrastructure.database.models.product import PRODUCT_TABLE
-from src.infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.database.models.product import PRODUCT_TABLE
+from infrastructure.repositories.product.base import BaseProductRepository
 
 
 class SQLAlchemyProductRepository(BaseProductRepository):

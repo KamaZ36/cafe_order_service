@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from uuid import UUID, uuid7
+from uuid import uuid7
 
-from src.domain.entities.category import Category
+from domain.entities.category import Category
 
-from src.app.interactors.common import AuthenticatedCommand
+from app.interactors.common import AuthenticatedCommand
 
-from src.infrastructure.database.transaction_manager.base import TransactionManager
-from src.infrastructure.repositories.category.base import BaseCategoryRepository
+from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.repositories.category.base import BaseCategoryRepository
 
 
 @dataclass(frozen=True, eq=False)

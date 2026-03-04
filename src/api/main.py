@@ -3,8 +3,8 @@ import uvicorn
 from fastapi import FastAPI
 
 
-from src.api.v1.endpoints import user_router, product_router, category_router
-from src.api.lifespan import lifespan
+from api.v1.endpoints import user_router, product_router, category_router
+from api.lifespan import lifespan
 
 
 def include_router(app: FastAPI) -> None:

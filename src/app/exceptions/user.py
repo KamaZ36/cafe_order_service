@@ -1,4 +1,4 @@
-from src.app.exceptions.base import AppErrorCode, AppException
+from app.exceptions.base import AppErrorCode, AppException
 
 
 class UserAlreadyExist(AppException):

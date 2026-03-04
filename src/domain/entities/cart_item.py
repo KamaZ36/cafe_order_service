@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.domain.entities.mixins import CreatedAtMixin, UpdatedAtMixin
+from domain.entities.mixins import CreatedAtMixin, UpdatedAtMixin
 
 
 @dataclass(kw_only=True)

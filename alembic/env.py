@@ -4,13 +4,13 @@ from logging.config import fileConfig
 
 from dotenv import load_dotenv
 
-from src.infrastructure.database.models.base import mapper_registry
-from src.infrastructure.database.models.cart import CART_ITEM_TABLE, CART_TABLE
-from src.infrastructure.database.models.category import CATEGORY_TABLE
-from src.infrastructure.database.models.order import ORDER_ITEM_TABLE, ORDER_TABLE
-from src.infrastructure.database.models.product import PRODUCT_TABLE
-from src.infrastructure.database.models.user import USER_TABLE
-from src.infrastructure.database.models.session import AUTH_SESSION_TABLE
+from infrastructure.database.models.base import mapper_registry
+from infrastructure.database.models.cart import CART_ITEM_TABLE, CART_TABLE
+from infrastructure.database.models.category import CATEGORY_TABLE
+from infrastructure.database.models.order import ORDER_ITEM_TABLE, ORDER_TABLE
+from infrastructure.database.models.product import PRODUCT_TABLE
+from infrastructure.database.models.user import USER_TABLE
+from infrastructure.database.models.session import AUTH_SESSION_TABLE
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection

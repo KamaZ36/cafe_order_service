@@ -3,19 +3,19 @@ from uuid import UUID
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from src.api.auth.dependencies import CurrentUserID, CurrentUserIP
-from src.app.dtos.cart import ResponseCartDTO
+from api.auth.dependencies import CurrentUserID, CurrentUserIP
+from app.dtos.cart import ResponseCartDTO
 
-from src.app.interactors.cart.get_cart import GetCartQuery, GetOrCreateCartInteractor
-from src.app.interactors.cart.add_item_to_cart import (
+from app.interactors.cart.get_cart import GetCartQuery, GetOrCreateCartInteractor
+from app.interactors.cart.add_item_to_cart import (
     AddItemToCartCommand,
     AddItemToCartInetractor,
 )
-from src.app.interactors.user.create_user import CreateUserCommand, CreateUserInteractor
+from app.interactors.user.create_user import CreateUserCommand, CreateUserInteractor
 
-from src.api.auth.auth_service import AuthService
-from src.api.v1.schemas.user import AddItemToCartSchema, CreateUserSchema
-from src.core.dependencies.container import container
+from api.auth.auth_service import AuthService
+from api.v1.schemas.user import AddItemToCartSchema, CreateUserSchema
+from core.dependencies.container import container
 
 
 router = APIRouter()

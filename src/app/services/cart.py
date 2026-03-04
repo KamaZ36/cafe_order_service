@@ -1,9 +1,8 @@
 from uuid import UUID, uuid7
 
-from src.domain.entities.cart import Cart
-from src.domain.entities.cart_item import CartItem
+from domain.entities.cart import Cart
 
-from src.infrastructure.repositories.cart.base import BaseCartRepository
+from infrastructure.repositories.cart.base import BaseCartRepository
 
 
 class CartService:

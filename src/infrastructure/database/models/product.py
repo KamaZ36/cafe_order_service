@@ -1,7 +1,7 @@
 from sqlalchemy import Table, Column, UUID, String, DECIMAL, Boolean, ForeignKey
 
-from src.domain.entities.product import Product
-from src.infrastructure.database.models.base import mapper_registry
+from domain.entities.product import Product
+from infrastructure.database.models.base import mapper_registry
 
 
 PRODUCT_TABLE = Table(
