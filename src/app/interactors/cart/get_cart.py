@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 
 from app.dtos.cart import ResponseCartDTO
-from app.services.cart import CartService
 from app.interactors.common import AuthenticatedCommand
 
-from infrastructure.database.transaction_manager.base import TransactionManager
+from infrastructure.readers.cart.base import BaseCartReader
 
 
 @dataclass(frozen=True, eq=False)
@@ -15,16 +14,9 @@ class GetCartQuery(AuthenticatedCommand):
 class GetOrCreateCartInteractor:
     def __init__(
         self,
-        cart_service: CartService,
-        transaction_manager: TransactionManager,
+        cart_reader: BaseCartReader,
     ) -> None:
-        self._cart_service = cart_service
-        self._transaction_manager = transaction_manager
+        self._cart_reader = cart_reader
 
-    async def __call__(self, data: GetCartQuery) -> ResponseCartDTO:
-        cart = await self._cart_service.get_cart_by_user_id(data.user_id)
-
-        cart_dto = ResponseCartDTO(id=cart.id, items=cart.get_items)
-
-        await self._transaction_manager.commit()
-        return cart_dto
+    async def __call__(self, query: GetCartQuery) -> ResponseCartDTO | None:
+        await self._cart_reader.get_by_user_id(query.user_id)

@@ -14,10 +14,6 @@ class BaseProductRepository(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_by_ids(self, product_ids: list[UUID]) -> list[Product]:
-        raise NotImplementedError()
-
-    @abstractmethod
     async def check_exist_by_id(self, product_id: UUID) -> bool:
         raise NotImplementedError()
 
