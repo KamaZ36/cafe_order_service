@@ -34,9 +34,6 @@ class AddItemToCartInetractor:
         self._cart_service = cart_service
 
     async def __call__(self, command: AddItemToCartCommand) -> None:
-        if command.quantity >= 5:
-            raise IncorretQuantityValue()
-
         cart = await self._cart_service.get_cart_by_user_id(command.user_id)
 
         product = await self._product_repository.get_by_id(

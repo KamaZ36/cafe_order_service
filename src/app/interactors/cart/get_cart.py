@@ -11,12 +11,14 @@ class GetCartQuery(AuthenticatedCommand):
     pass
 
 
-class GetOrCreateCartInteractor:
+class GetCartInteractor:
     def __init__(
         self,
         cart_reader: BaseCartReader,
     ) -> None:
         self._cart_reader = cart_reader
 
-    async def __call__(self, query: GetCartQuery) -> ResponseCartDTO | None:
-        await self._cart_reader.get_by_user_id(query.user_id)
+    async def __call__(self, query: GetCartQuery) -> ResponseCartDTO:
+        cart = await self._cart_reader.get_by_user_id(query.user_id)
+
+        return cart

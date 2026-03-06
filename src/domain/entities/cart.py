@@ -3,6 +3,7 @@ from uuid import UUID, uuid7
 
 from domain.entities.cart_item import CartItem
 from domain.entities.mixins import CreatedAtMixin, UpdatedAtMixin
+from domain.exceptions.cart import ProductNotExistInCart
 
 
 @dataclass(kw_only=True)
@@ -20,6 +21,15 @@ class Cart(CreatedAtMixin, UpdatedAtMixin):
     def total_items(self) -> int:
         """Получить количество товаров в корзине"""
         return sum(item.quantity for item in self.items.values())
+
+    def check_product_exist(self, product_id: UUID) -> bool:
+        """
+        Проверить наличие товара в корзине
+
+        :param product_id: ID продукта
+        :type product_id: UUID
+        """
+        return product_id in self.items if self.items else False
 
     def add_item(self, product_id: UUID, quantity: int = 1) -> None:
         """
@@ -43,7 +53,7 @@ class Cart(CreatedAtMixin, UpdatedAtMixin):
             item = CartItem(id=uuid7(), product_id=product_id, quantity=quantity)
             self.items[product_id] = item
 
-    def update_item_quantity(self, product_id: UUID, quantity: int) -> None:
+    def update_product_quantity(self, product_id: UUID, quantity: int) -> None:
         """
         Docstring for update_item_quantity
 
@@ -54,7 +64,7 @@ class Cart(CreatedAtMixin, UpdatedAtMixin):
         """
 
         if product_id not in self.items:
-            raise ValueError("Продукт не найден в корзине")
+            raise ProductNotExistInCart()
 
         item = self.items[product_id]
 
@@ -72,5 +82,11 @@ class Cart(CreatedAtMixin, UpdatedAtMixin):
         """
 
         if product_id not in self.items:
-            raise ValueError("Продукт не найден в корзине")
+            return
+
         del self.items[product_id]
+
+    def clear(self) -> None:
+        """Очистить содержимое корзины"""
+
+        self.items.clear()
