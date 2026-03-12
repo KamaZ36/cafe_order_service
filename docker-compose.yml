@@ -4,7 +4,7 @@ services:
     container_name: api
     build: 
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/app/Dockerfile
     ports:
       - 8000:8000
     volumes:
@@ -21,6 +21,8 @@ services:
         condition: service_healthy  
       redis:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
 
   postgres:
     image: postgres:18.1
@@ -57,6 +59,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  migrations:
+    container_name: migrations
+    build: 
+      context: .
+      dockerfile: docker/migrations/Dockerfile
+    volumes:
+      - ./alembic:/src/alembic
+    command: "alembic upgrade head"
+    networks:
+      - backend_network
+    env_file:
+      - ./.env
+    depends_on:
+      postgres:
+        condition: service_healthy  
 
   # minio:
   #   image: minio/minio:latest
