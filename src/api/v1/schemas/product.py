@@ -13,3 +13,8 @@ class CreateProductSchema(BaseModel):
     is_available: bool = True
     is_popular: bool = False
     is_new: bool = False
+
+
+class GetProductListSchema(BaseModel):
+    limit: int
+    offset: int

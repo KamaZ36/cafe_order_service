@@ -7,6 +7,7 @@ from app.interactors.category.create_category import CreateCategoryInteractor
 from app.interactors.product.create_product import CreateProductInteractor
 from app.interactors.cart.add_item_to_cart import AddItemToCartInetractor
 from app.interactors.cart.get_cart import GetCartInteractor
+from app.interactors.product.get_products import GetProductListInteractor
 from app.interactors.user.create_user import CreateUserInteractor
 
 
@@ -25,6 +26,7 @@ class InteractorsProvider(Provider):
     create_product = provide(CreateProductInteractor)
     delete_product = provide(DeleteProductInteractor)
     get_product_by_id = provide(GetProductByIdInteractor)
+    get_product_list = provide(GetProductListInteractor)
 
     # CATEGORY
     create_category = provide(CreateCategoryInteractor)

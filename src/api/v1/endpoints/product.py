@@ -2,19 +2,25 @@ from decimal import Decimal
 from typing import Annotated
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, HTTPException, UploadFile, Form
+from fastapi import APIRouter, HTTPException, Query, UploadFile, Form
 from fastapi.responses import JSONResponse
 
+from api.v1.schemas.product import GetProductListSchema
+from app.dtos.pagination import Pagination
 from app.interactors.product.get_product import (
     GetProductByIdInteractor,
     GetProductByIdQuery,
 )
-from app.dtos.product import ResponseProductDTO
+from app.dtos.product import ResponseProductDTO, ResponseProductListDTO
 from app.interactors.product.delete_product import (
     DeleteProductCommand,
     DeleteProductInteractor,
 )
 from app.dtos.file import FileDTO
+from app.interactors.product.get_products import (
+    GetProductListInteractor,
+    GetProductListQuery,
+)
 from domain.entities.product import Product
 
 from app.interactors.product.create_product import (
@@ -60,6 +66,19 @@ async def create_product(
         product = await interactor(command)
 
     return product
+
+
+@router.get("", description="Получить список продуктов по фильтрам")
+async def get_product_list(
+    data: GetProductListSchema = Query(...),
+) -> ResponseProductListDTO:
+    query = GetProductListQuery(
+        pagination=Pagination(limit=data.limit, offset=data.offset)
+    )
+    async with container() as context:
+        interactor = await context.get(GetProductListInteractor)
+        products = await interactor(query)
+    return products
 
 
 @router.get("/{product_id}", description="Получить информацию о товаре по его ID")

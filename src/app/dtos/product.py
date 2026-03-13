@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from uuid import UUID
 
 
 @dataclass(frozen=True, eq=False, kw_only=True)
@@ -8,24 +9,27 @@ class ResponseProductDTO:
     description: str
     price: Decimal
 
-    image: str | None = None
+    image: str | None
 
-    is_available: bool = True
-    is_popular: bool = False
-    is_new: bool = False
+    is_available: bool
+    is_popular: bool
+    is_new: bool
 
 
 @dataclass(frozen=True, eq=False, kw_only=True)
 class ResponseProductForListDTO:
+    id: UUID
     name: str
     image: str
     price: Decimal
 
-    is_available: bool = True
-    is_popular: bool = False
-    is_new: bool = False
-    
+    is_available: bool
+    is_popular: bool
+    is_new: bool
+
+
 @dataclass(frozen=True, eq=False, kw_only=True)
 class ResponseProductListDTO:
-    total: int 
-    
+    total_count: int
+    count: int
+    products: list[ResponseProductForListDTO]
