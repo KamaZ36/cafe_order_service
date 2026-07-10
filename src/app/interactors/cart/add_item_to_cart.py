@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.exceptions.product import (
-    IncorretQuantityValue,
     ProductIsNotAvailable,
     ProductNotFound,
 )
@@ -11,7 +10,7 @@ from app.interactors.common import AuthenticatedCommand
 
 from infrastructure.database.transaction_manager.base import TransactionManager
 from infrastructure.repositories.cart.base import BaseCartRepository
-from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import ProductRepository
 
 
 @dataclass(frozen=True, eq=False)
@@ -24,7 +23,7 @@ class AddItemToCartInetractor:
     def __init__(
         self,
         transaction_manager: TransactionManager,
-        product_repository: BaseProductRepository,
+        product_repository: ProductRepository,
         cart_service: CartService,
         cart_repository: BaseCartRepository,
     ) -> None:

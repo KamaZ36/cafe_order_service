@@ -5,7 +5,7 @@ from app.exceptions.product import ProductNotFound
 from app.dtos.product import ResponseProductDTO
 
 from infrastructure.readers.product.base import ProductReader
-from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import ProductRepository
 
 
 @dataclass(frozen=True, eq=False)

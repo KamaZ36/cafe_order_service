@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from domain.entities.product import Product
 
 from infrastructure.database.models.product import PRODUCT_TABLE
-from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import ProductRepository
 
 
-class SQLAlchemyProductRepository(BaseProductRepository):
+class SQLAlchemyProductRepository(ProductRepository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
@@ -19,6 +19,16 @@ class SQLAlchemyProductRepository(BaseProductRepository):
     async def get_by_id(self, product_id: UUID) -> Product | None:
         product = await self._session.get(Product, product_id)
         return product if product else None
+
+    async def get_by_ids(self, product_ids: list[UUID]) -> dict[UUID, Product]:
+        if not product_ids:
+            return {}
+
+        query = select(Product).where(Product.id.in_(product_ids))
+        result = await self._session.execute(query)
+        products = result.scalars().all()
+
+        return {product.id: product for product in products}
 
     async def check_exist_by_id(self, product_id: UUID) -> bool:
         query = select(exists().where(PRODUCT_TABLE.c.id == product_id))

@@ -8,7 +8,7 @@ USER_TABLE = Table(
     "users",
     mapper_registry.metadata,
     Column("id", UUID, primary_key=True, unique=True),
-    Column("phone_number", String, unique=True),
+    Column("phone_number", String, unique=False, nullable=True),
 )
 
 

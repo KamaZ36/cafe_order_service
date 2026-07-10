@@ -6,7 +6,7 @@ from app.interactors.common import AuthenticatedCommand
 
 from infrastructure.database.transaction_manager.base import TransactionManager
 from infrastructure.file_storage.base import BaseFileStorage
-from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import ProductRepository
 
 
 @dataclass(frozen=True, eq=False)
@@ -17,7 +17,7 @@ class DeleteProductCommand(AuthenticatedCommand):
 class DeleteProductInteractor:
     def __init__(
         self,
-        product_repository: BaseProductRepository,
+        product_repository: ProductRepository,
         file_storage: BaseFileStorage,
         transaction_manager: TransactionManager,
     ) -> None:

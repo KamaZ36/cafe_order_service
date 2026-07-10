@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 from api.auth.dependencies import CurrentUserID, CurrentUserIP
 from api.v1.schemas.cart import UpdateCartItemSchema
+from api.v1.schemas.order import CreatePickupOrderSchema
 from app.dtos.cart import ResponseCartDTO
 
 from app.interactors.cart.get_cart import GetCartQuery, GetCartInteractor
@@ -16,6 +17,7 @@ from app.interactors.cart.update_cart_item import (
     UpdateCartItemCommand,
     UpdateCartItemInteractor,
 )
+from app.interactors.order.create import CreateOrderCommand, CreateOrderInteractor
 from app.interactors.user.create_user import CreateUserCommand, CreateUserInteractor
 
 from api.auth.auth_service import AuthService
@@ -63,6 +65,22 @@ async def get_cart_current_user(user_id: CurrentUserID) -> ResponseCartDTO:
 async def add_item_to_cart_current_user(
     user_id: CurrentUserID, data: AddItemToCartSchema
 ) -> None:
+
+    response = JSONResponse(content={"result": "OK!"})
+
+    if user_id is None:
+        command = CreateUserCommand()
+        async with container() as context:
+            interactor = await context.get(CreateUserInteractor)
+            auth_service = await context.get(AuthService)
+
+            user_id = await interactor(command)
+            auth_session = await auth_service.create_user_session(user_id=user_id)
+
+        response.set_cookie(
+            key="session_id", value=auth_session.session_id, httponly=True
+        )
+
     command = AddItemToCartCommand(
         user_id=user_id, product_id=data.product_id, quantity=data.quantity
     )
@@ -70,9 +88,12 @@ async def add_item_to_cart_current_user(
         interactor = await context.get(AddItemToCartInetractor)
         await interactor(command)
 
+    return response
+
 
 @router.patch(
-    "/@me/cart/items/{product_id}", description="Изменить количество товара в корзине"
+    "/@me/cart/items/{product_id}/quantity",
+    description="Изменить количество товара в корзине",
 )
 async def update_cart_item_quantity(
     product_id: UUID, data: UpdateCartItemSchema, user_id: CurrentUserID
@@ -85,22 +106,16 @@ async def update_cart_item_quantity(
         await interactor(command)
 
 
-@router.get("/{user_id}/cart", description="Получить корзину пользователя.")
-async def get_cart_user_by_id(user_id: UUID) -> ResponseCartDTO:
-    query = GetCartQuery(user_id=user_id)
-    async with container() as context:
-        interactor = await context.get(GetCartInteractor)
-        cart = await interactor(query)
-    return cart
-
-
 @router.post(
-    "/{user_id}/cart/item", description="Добавить товар пользователю в корзину."
+    "/@me/orders/pickup",
+    description="Оформить заказ из активной корзины для текущего пользователя",
 )
-async def add_item_in_cart(user_id: UUID, data: AddItemToCartSchema) -> None:
-    command = AddItemToCartCommand(
-        user_id=user_id, product_id=data.product_id, quantity=data.quantity
+async def create_order_from_cart(
+    user_id: CurrentUserID, data: CreatePickupOrderSchema
+) -> None:
+    command = CreateOrderCommand(
+        user_id=user_id, desired_time=data.desired_time, comment=data.comment
     )
     async with container() as context:
-        interactor = await context.get(AddItemToCartInetractor)
+        interactor = await context.get(CreateOrderInteractor)
         await interactor(command)

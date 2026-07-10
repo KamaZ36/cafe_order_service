@@ -11,7 +11,7 @@ from infrastructure.repositories.user.base import BaseUserRepository
 
 @dataclass
 class CreateUserCommand:
-    phone_number: str
+    phone_number: str | None = None
 
 
 class CreateUserInteractor:
@@ -24,11 +24,14 @@ class CreateUserInteractor:
         self._transaction_manager = transaction_manager
 
     async def __call__(self, data: CreateUserCommand) -> UUID:
-        is_user_exist = await self._user_repository.check_user_exist_by_phone_number(
-            data.phone_number
-        )
-        if is_user_exist:
-            raise UserAlreadyExist()
+        if data.phone_number:
+            is_user_exist = (
+                await self._user_repository.check_user_exist_by_phone_number(
+                    data.phone_number
+                )
+            )
+            if is_user_exist:
+                raise UserAlreadyExist()
 
         user = User(id=uuid7(), phone_number=data.phone_number)
 

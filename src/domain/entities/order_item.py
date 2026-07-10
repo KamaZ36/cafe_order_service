@@ -10,4 +10,4 @@ class OrderItem:
     product_id: UUID
     quantity: int = 1
     price_at_order: Decimal
-    subtotal: Decimal
+    item_total_price: Decimal

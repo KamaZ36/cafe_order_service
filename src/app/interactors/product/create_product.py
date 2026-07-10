@@ -2,15 +2,15 @@ from dataclasses import dataclass
 from decimal import Decimal
 from uuid import UUID, uuid7
 
+from domain.entities.product import Product
+
 from app.exceptions.product import ProductWithNameAlreadyExist
 from app.dtos.file import FileDTO
 from app.services.product import ProductService
-from domain.entities.product import Product
-
 from app.interactors.common import AuthenticatedCommand
 
 from infrastructure.database.transaction_manager.base import TransactionManager
-from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import ProductRepository
 
 
 @dataclass(frozen=True, eq=False, kw_only=True)
@@ -29,7 +29,7 @@ class CreateProductCommand(AuthenticatedCommand):
 class CreateProductInteractor:
     def __init__(
         self,
-        product_repository: BaseProductRepository,
+        product_repository: ProductRepository,
         transaction_manager: TransactionManager,
         product_service: ProductService,
     ) -> None:

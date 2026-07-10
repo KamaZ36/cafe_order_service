@@ -31,3 +31,6 @@ class SQLAlchemyCartRepository(BaseCartRepository):
 
     async def save(self, cart: Cart) -> None:
         pass
+
+    async def delete(self, cart: Cart) -> None:
+        await self._session.delete(cart)

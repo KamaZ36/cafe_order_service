@@ -21,20 +21,22 @@ async def get_current_user_ip_address(request: Request) -> str:
     return ip
 
 
-async def get_current_user_id(request: Request) -> UUID:
+async def get_current_user_id(request: Request) -> UUID | None:
     session_id = request.cookies.get("session_id")
     if not session_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        return None
+        # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     async with container() as context:
         auth_session_repository = await context.get(BaseSessionRepository)
         auth_session = await auth_session_repository.get_by_session_id(session_id)
 
     if not auth_session:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        return None
+        # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     return auth_session.user_id
 
 
-CurrentUserID = Annotated[UUID, Depends(get_current_user_id)]
+CurrentUserID = Annotated[UUID | None, Depends(get_current_user_id)]
 CurrentUserIP = Annotated[str, Depends(get_current_user_ip_address)]

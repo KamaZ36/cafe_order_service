@@ -9,7 +9,7 @@ AUTH_SESSION_TABLE = Table(
     "sessions",
     mapper_registry.metadata,
     Column("session_id", UUID, unique=True, primary_key=True),
-    Column("user_id", UUID, nullable=False),
+    Column("user_id", UUID, nullable=True),
     Column("ip_address", INET, nullable=True),
     Column("created_at", DateTime, server_default=func.now()),
     Column("expires_at", DateTime, nullable=False),

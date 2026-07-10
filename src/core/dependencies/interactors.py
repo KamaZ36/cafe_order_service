@@ -1,6 +1,7 @@
 from dishka import Provider, provide, Scope
 
 from app.interactors.cart.update_cart_item import UpdateCartItemInteractor
+from app.interactors.order.create import CreateOrderInteractor
 from app.interactors.product.get_product import GetProductByIdInteractor
 from app.interactors.product.delete_product import DeleteProductInteractor
 from app.interactors.category.create_category import CreateCategoryInteractor
@@ -30,3 +31,6 @@ class InteractorsProvider(Provider):
 
     # CATEGORY
     create_category = provide(CreateCategoryInteractor)
+
+    # ORDER
+    create_order = provide(CreateOrderInteractor)

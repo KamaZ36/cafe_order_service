@@ -19,3 +19,6 @@ class CartService:
         if cart is None:
             cart = await self.create_cart(user_id=user_id)
         return cart
+
+    async def delete_cart(self, cart: Cart) -> None:
+        await self._cart_repository.delete(cart)

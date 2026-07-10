@@ -2,9 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from dishka import Provider, provide, Scope
 
+from infrastructure.repositories.order.base import OrderRepository
+from infrastructure.repositories.order.sqlalchemy import SQLAlchemyOrderRepository
 from infrastructure.repositories.session.base import BaseSessionRepository
 from infrastructure.repositories.category.base import BaseCategoryRepository
-from infrastructure.repositories.product.base import BaseProductRepository
+from infrastructure.repositories.product.base import ProductRepository
 from infrastructure.repositories.cart.base import BaseCartRepository
 from infrastructure.repositories.user.base import BaseUserRepository
 
@@ -33,12 +35,16 @@ class RepositoriesProvider(Provider):
         return SQLAlchemyCartRepository(session)
 
     @provide
-    def get_product_repository(self, session: AsyncSession) -> BaseProductRepository:
+    def get_product_repository(self, session: AsyncSession) -> ProductRepository:
         return SQLAlchemyProductRepository(session)
 
     @provide
     def get_category_repository(self, session: AsyncSession) -> BaseCategoryRepository:
         return SQLAlchemyCategoryRepository(session)
+
+    @provide
+    def get_order_repository(self, session: AsyncSession) -> OrderRepository:
+        return SQLAlchemyOrderRepository(session)
 
     @provide
     def get_auth_session_repository(

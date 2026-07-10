@@ -5,4 +5,4 @@ from uuid import UUID
 @dataclass(kw_only=True)
 class User:
     id: UUID
-    phone_number: str
+    phone_number: str | None

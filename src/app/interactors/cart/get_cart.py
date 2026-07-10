@@ -18,7 +18,7 @@ class GetCartInteractor:
     ) -> None:
         self._cart_reader = cart_reader
 
-    async def __call__(self, query: GetCartQuery) -> ResponseCartDTO:
+    async def __call__(self, query: GetCartQuery) -> ResponseCartDTO | None:
         cart = await self._cart_reader.get_by_user_id(query.user_id)
 
         return cart

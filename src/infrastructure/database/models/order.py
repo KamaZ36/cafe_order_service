@@ -1,7 +1,19 @@
-from sqlalchemy import Table, Column, UUID, DECIMAL, String, Integer, ForeignKey
+from sqlalchemy import (
+    Table,
+    Column,
+    UUID,
+    DECIMAL,
+    String,
+    Integer,
+    ForeignKey,
+    Enum,
+    DateTime,
+)
+from sqlalchemy.orm import relationship
 
-from domain.entities.order import Order
+from domain.entities.order import Order, OrderStatus, OrderType
 from domain.entities.order_item import OrderItem
+
 from infrastructure.database.models.base import mapper_registry
 
 
@@ -11,8 +23,14 @@ ORDER_TABLE = Table(
     Column("id", UUID, primary_key=True, unique=True),
     Column("order_number", String, nullable=False),
     Column("user_id", UUID, ForeignKey("users.id")),
-    Column("cart_id", UUID, ForeignKey("carts.id")),
-    Column("total_amount", DECIMAL(precision=10, scale=2), nullable=False),
+    Column("order_type", Enum(OrderType), nullable=False),
+    Column("status", Enum(OrderStatus), nullable=False, default=OrderStatus.PENDING),
+    Column("desired_time", DateTime, nullable=False),
+    Column("total_amount", DECIMAL(10, 2), nullable=False),
+    Column("delivery_address", String),
+    Column("delivery_entrance", String),
+    Column("delivery_floor", Integer),
+    Column("delivery_intercom", String),
     Column("comment", String, nullable=False),
 )
 
@@ -25,9 +43,11 @@ ORDER_ITEM_TABLE = Table(
     Column("product_id", UUID, ForeignKey("products.id")),
     Column("quantity", Integer, nullable=False, server_default="1"),
     Column("price_at_order", DECIMAL(precision=10, scale=2), nullable=False),
-    Column("subtotal", DECIMAL(precision=10, scale=2), nullable=False),
+    Column("item_total_price", DECIMAL(precision=10, scale=2), nullable=False),
 )
 
 
-mapper_registry.map_imperatively(Order, ORDER_TABLE)
+mapper_registry.map_imperatively(
+    Order, ORDER_TABLE, properties={"items": relationship(OrderItem)}
+)
 mapper_registry.map_imperatively(OrderItem, ORDER_ITEM_TABLE)
