@@ -1,5 +1,13 @@
 services:
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+
   api:
     container_name: api
     build: 

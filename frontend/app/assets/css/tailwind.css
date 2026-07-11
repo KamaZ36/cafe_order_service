@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Базовые стили страницы */
+@layer base {
+  html {
+    /* Плавный скролл как запасной вариант к scrollIntoView */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-milk text-coal font-sans antialiased;
+  }
+
+  /* Уважение к пользователям с отключённой анимацией */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
