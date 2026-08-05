@@ -17,10 +17,10 @@ export interface Product {
 }
 
 export const useSiteData = () => {
-  // Якорная навигация по секциям
-  const nav = [
+  // Навигация: якоря ведут на секции лендинга, «Кафе» — на отдельную страницу меню
+  const nav: { label: string; anchor?: string; to?: string }[] = [
     { label: 'Производство', anchor: 'production' },
-    { label: 'Кафе', anchor: 'cafe' },
+    { label: 'Кафе', to: '/cafe' },
     { label: 'Магазин', anchor: 'shop' },
     { label: 'Контакты', anchor: 'contact' }
   ]

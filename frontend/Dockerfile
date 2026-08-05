@@ -1,15 +1,15 @@
 # Этап 1: сборка Nuxt-приложения
-FROM node:22-alpine AS build
+FROM oven/bun:1-alpine AS build
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN bun run build
 
 # Этап 2: лёгкий рантайм — только собранный .output
-FROM node:22-alpine
+FROM oven/bun:1-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production \
@@ -19,4 +19,4 @@ ENV NODE_ENV=production \
 COPY --from=build /app/.output ./.output
 
 EXPOSE 3000
-CMD ["node", ".output/server/index.mjs"]
+CMD ["bun", ".output/server/index.mjs"]

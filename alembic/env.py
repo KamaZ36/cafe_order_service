@@ -1,22 +1,28 @@
-import os
 import asyncio
+import os
 from logging.config import fileConfig
 
 from dotenv import load_dotenv
-
-from infrastructure.database.models.base import mapper_registry
-from infrastructure.database.models.cart import CART_ITEM_TABLE, CART_TABLE
-from infrastructure.database.models.category import CATEGORY_TABLE
-from infrastructure.database.models.order import ORDER_ITEM_TABLE, ORDER_TABLE
-from infrastructure.database.models.product import PRODUCT_TABLE
-from infrastructure.database.models.user import USER_TABLE
-from infrastructure.database.models.session import AUTH_SESSION_TABLE
-
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from zernyshko.infrastructure.database.models.base import mapper_registry
+from zernyshko.infrastructure.database.models.cart import (  # noqa: F401
+    CART_ITEM_TABLE,
+    CART_TABLE,
+)
+from zernyshko.infrastructure.database.models.category import CATEGORY_TABLE  # noqa: F401
+from zernyshko.infrastructure.database.models.order import (  # noqa: F401
+    ORDER_ITEM_TABLE,
+    ORDER_TABLE,
+)
+from zernyshko.infrastructure.database.models.product import PRODUCT_TABLE  # noqa: F401
+from zernyshko.infrastructure.database.models.session import (
+    AUTH_SESSION_TABLE,  # noqa: F401
+)
+from zernyshko.infrastructure.database.models.user import USER_TABLE  # noqa: F401
 
 load_dotenv(dotenv_path="./.env")
 

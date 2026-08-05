@@ -26,3 +26,57 @@
     }
   }
 }
+
+/* Общие компоненты интерфейса заказа/кабинета: единое скругление, мягкие
+   тени и тактильная обратная связь вместо резких прямоугольных краёв */
+@layer components {
+  .card {
+    @apply rounded-xl border border-coal/10 bg-white shadow-sm;
+  }
+
+  /* Тонированная тень в цвет кнопки — иначе плоская заливка тонет в белой
+     карточке и выглядит блёкло. Тень есть уже в состоянии покоя, не только
+     на hover, чтобы кнопка сразу читалась как основное действие на экране. */
+  .btn-primary {
+    @apply rounded-lg bg-olive px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-[0_4px_14px_-2px_rgba(85,107,47,0.45)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-olive-dark hover:shadow-[0_10px_24px_-4px_rgba(85,107,47,0.55)] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_-2px_rgba(85,107,47,0.45)] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none disabled:active:scale-100;
+  }
+
+  .input-field {
+    @apply rounded-lg border border-coal/20 px-3 py-2 text-coal transition-shadow duration-200 focus:border-olive focus:outline-none focus:ring-2 focus:ring-olive/15;
+  }
+
+  /* Маленькая надпись-"кикер" над заголовком страницы — даёт разделу
+     контекст (в каком ты сейчас блоке админки), не только сам h1 */
+  .kicker {
+    @apply mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-olive;
+  }
+
+  /* Пилюли навигации админки: тонированный фон+рамка на активном пункте
+     вместо голого текста без скруглений */
+  .admin-nav-link {
+    @apply rounded-full border border-transparent px-4 py-2 text-sm font-medium uppercase tracking-wide text-warmgray transition-all duration-200 hover:border-coal/10 hover:text-coal;
+  }
+
+  .admin-nav-link--active {
+    @apply border-olive/25 bg-olive/10 text-olive-dark;
+  }
+}
+
+/* Бейдж счётчика корзины: лёгкий "поп" при изменении количества */
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-badge-pop {
+  animation: badge-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}

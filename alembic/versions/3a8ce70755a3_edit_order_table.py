@@ -8,10 +8,10 @@ Create Date: 2026-04-22 19:12:05.415390
 
 from typing import Sequence, Union
 
-from alembic import op
-from sqlalchemy.dialects.postgresql import ENUM
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import ENUM
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "3a8ce70755a3"
@@ -39,9 +39,7 @@ def upgrade() -> None:
 
     op.add_column(
         "order_items",
-        sa.Column(
-            "item_total_price", sa.DECIMAL(precision=10, scale=2), nullable=False
-        ),
+        sa.Column("item_total_price", sa.DECIMAL(precision=10, scale=2), nullable=False),
     )
     op.drop_column("order_items", "subtotal")
     op.add_column(

@@ -1,0 +1,31 @@
+from enum import Enum
+
+
+class AppErrorCode(str, Enum):
+    # Пользователи
+    USER_ALREADY_EXIST = "USER_ALREADY_EXIST"
+    USER_NOT_FOUND = "USER_NOT_FOUND"
+    USER_PHONE_NUMBER_REQUIRED = "USER_PHONE_NUMBER_REQUIRED"
+    INVALID_CREDENTIALS = "INVALID_CREDENTIALS"
+
+    # Продукты
+    PRODUCT_NOT_FOUND = "PRODUCT_NOT_FOUND"
+    PRODUCT_IS_NOT_AVAILABLE = "PRODUCT_IS_NOT_AVAILABLE"
+    PRODUCT_IS_NOT_IN_CART = "PRODUCT_IS_NOT_IN_CART"
+    INCORRECT_PRODUCT_QUANTITY = "INCORRECT_PRODUCT_QUANTITY"
+    PRODUCT_WITH_NAME_ALREADY_EXIST = "PRODUCT_WITH_NAME_ALREADY_EXIST"
+
+    # Заказы
+    ORDER_NOT_FOUND = "ORDER_NOT_FOUND"
+
+    # Авторизация
+    UNAUTHORIZED = "UNAUTHORIZED"
+    ACCESS_DENIED = "ACCESS_DENIED"
+    AUTH_CODE_NOT_VALID = "AUTH_CODE_NOT_VALID"
+    RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED"
+
+
+class AppException(Exception):
+    def __init__(self, message: str, error_code: AppErrorCode) -> None:
+        super().__init__(message)
+        self.error_code = error_code

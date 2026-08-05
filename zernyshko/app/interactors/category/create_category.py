@@ -1,0 +1,35 @@
+from dataclasses import dataclass
+from uuid import uuid7
+
+from zernyshko.app.exceptions.auth import AccessDenied
+from zernyshko.domain.entities.category import Category
+from zernyshko.infrastructure.database.transaction_manager.base import TransactionManager
+from zernyshko.infrastructure.identity_provider.base import IdentityProvider
+from zernyshko.infrastructure.repositories.category.base import BaseCategoryRepository
+
+
+@dataclass(frozen=True, eq=False)
+class CreateCategoryCommand:
+    name: str
+
+
+class CreateCategoryInteractor:
+    def __init__(
+        self,
+        identity_provider: IdentityProvider,
+        category_repository: BaseCategoryRepository,
+        transaction_manager: TransactionManager,
+    ) -> None:
+        self._identity_provider = identity_provider
+        self._category_repository = category_repository
+        self._transaction_manager = transaction_manager
+
+    async def __call__(self, command: CreateCategoryCommand) -> Category:
+        current_user = await self._identity_provider.get_current_user()
+        if not current_user.is_staff():
+            raise AccessDenied()
+
+        category = Category(id=uuid7(), name=command.name)
+        await self._category_repository.create(category)
+        await self._transaction_manager.commit()
+        return category
