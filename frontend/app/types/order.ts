@@ -9,7 +9,7 @@ export interface OrderItemDTO {
 export interface OrderDTO {
   id: string
   order_number: string
-  status: 'PENDING' | 'CONFIRMED' | 'READY' | 'COMPLETED' | 'CANCELLED'
+  status: 'AWAITING_PAYMENT' | 'PENDING' | 'CONFIRMED' | 'READY' | 'COMPLETED' | 'CANCELLED'
   order_type: 'PICKUP' | 'DELIVERY'
   desired_time: string
   total_amount: string

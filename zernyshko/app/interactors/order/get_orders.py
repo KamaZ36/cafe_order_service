@@ -11,7 +11,7 @@ from zernyshko.infrastructure.readers.order.base import OrderReader
 @dataclass(frozen=True, eq=False)
 class GetStaffOrderListQuery:
     pagination: Pagination
-    status: OrderStatus | None = None
+    status: list[OrderStatus] | None = None
 
 
 class GetStaffOrderListInteractor:

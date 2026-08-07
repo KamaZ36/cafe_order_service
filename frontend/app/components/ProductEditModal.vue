@@ -9,6 +9,7 @@ interface ProductDetailsDTO {
   name: string
   description: string
   weight: string
+  composition: string | null
   category_id: string
   image: string | null
   price: string
@@ -33,6 +34,7 @@ const error = ref('')
 const name = ref('')
 const description = ref('')
 const weight = ref('')
+const composition = ref('')
 const categoryId = ref('')
 const price = ref('')
 const isAvailable = ref(true)
@@ -48,6 +50,7 @@ onMounted(async () => {
     name.value = product.name
     description.value = product.description
     weight.value = product.weight
+    composition.value = product.composition ?? ''
     categoryId.value = product.category_id
     price.value = product.price
     isAvailable.value = product.is_available
@@ -73,6 +76,7 @@ const submit = async () => {
   formData.append('name', name.value)
   formData.append('description', description.value)
   formData.append('weight', weight.value)
+  formData.append('composition', composition.value)
   formData.append('category_id', categoryId.value)
   formData.append('price', price.value)
   formData.append('is_available', String(isAvailable.value))
@@ -123,11 +127,13 @@ const submit = async () => {
             <h2 class="font-display text-2xl font-semibold text-coal">Редактировать товар</h2>
             <button
               type="button"
-              class="flex h-8 w-8 items-center justify-center rounded-full text-xl leading-none text-warmgray transition-colors duration-200 hover:bg-coal/5 hover:text-coal"
+              class="flex h-11 w-11 items-center justify-center rounded-full text-warmgray transition-all duration-150 hover:bg-coal/5 hover:text-coal active:scale-90"
               aria-label="Закрыть"
               @click="close"
             >
-              ✕
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
@@ -151,6 +157,16 @@ const submit = async () => {
             <label class="text-sm font-medium text-coal">
               Описание
               <textarea v-model="description" required rows="2" class="input-field mt-1 block w-full" />
+            </label>
+
+            <label class="text-sm font-medium text-coal">
+              Состав
+              <textarea
+                v-model="composition"
+                rows="2"
+                placeholder="Говядина, лук, специи…"
+                class="input-field mt-1 block w-full"
+              />
             </label>
 
             <div class="grid grid-cols-2 gap-4">

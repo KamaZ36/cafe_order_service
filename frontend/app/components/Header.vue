@@ -24,6 +24,10 @@ const isLoggedIn = computed(() => Boolean(user.value?.phone_number))
 // поэтому ссылка одна на обе роли, без разделения по названию
 const isStaff = computed(() => user.value?.role === 'ADMIN' || user.value?.role === 'MANAGER')
 
+// На странице меню корзина на десктопе уже постоянно видна сайдбаром —
+// иконка в шапке там же дублировала бы её, прячем на lg+
+const hasSidebarCart = computed(() => route.path === '/cafe')
+
 const onScroll = () => {
   isScrolled.value = window.scrollY > 40
 }
@@ -106,7 +110,7 @@ const goHome = () => {
         <button
           type="button"
           class="relative flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200"
-          :class="isSolid ? 'text-coal hover:bg-coal/5' : 'text-white hover:bg-white/10'"
+          :class="[isSolid ? 'text-coal hover:bg-coal/5' : 'text-white hover:bg-white/10', { 'lg:hidden': hasSidebarCart }]"
           aria-label="Открыть корзину"
           @click="isCartOpen = true"
         >

@@ -14,6 +14,7 @@ from testcontainers.community.redis import RedisContainer
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 APP_TABLES = [
+    "payments",
     "order_items",
     "orders",
     "cart_items",
@@ -49,6 +50,9 @@ def containers() -> None:
         os.environ["db_database"] = "database"
         os.environ["debug"] = "True"
         os.environ["staff_provision_secret"] = "test-secret"
+        os.environ["yookassa_shop_id"] = "test-shop-id"
+        os.environ["yookassa_secret_key"] = "test-secret-key"
+        os.environ["frontend_base_url"] = "http://localhost:3000"
         os.environ["redis_host"] = redis.get_container_host_ip()
         os.environ["redis_port"] = str(redis.get_exposed_port(6379))
 

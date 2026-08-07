@@ -80,6 +80,10 @@ const handleAddToCart = async (productId: string) => {
     addingProductId.value = null
   }
 }
+
+// Быстрый просмотр товара — открывается кликом по карточке (не по кнопке
+// «В корзину», у неё своё действие)
+const viewingProductId = ref<string | null>(null)
 </script>
 
 <template>
@@ -163,40 +167,55 @@ const handleAddToCart = async (productId: string) => {
             Меню скоро появится.
           </p>
 
-          <div v-else-if="isFiltering && !hasVisibleProducts" class="text-center text-warmgray">
-            <p>Ничего не нашлось.</p>
-            <button type="button" class="mt-3 text-olive underline" @click="resetFilters">
-              Сбросить фильтры
-            </button>
-          </div>
+          <!-- На десктопе корзина всегда на виду сбоку — иконка в шапке
+               легко теряется, когда всё внимание на меню -->
+          <div v-else class="lg:grid lg:grid-cols-[1fr_360px] lg:items-start lg:gap-12">
+            <div>
+              <div v-if="isFiltering && !hasVisibleProducts" class="text-center text-warmgray">
+                <p>Ничего не нашлось.</p>
+                <button type="button" class="mt-3 text-olive underline" @click="resetFilters">
+                  Сбросить фильтры
+                </button>
+              </div>
 
-          <div v-for="category in visibleCategories" :key="category.id" class="mb-16 last:mb-0">
-            <h2 class="font-display text-3xl font-semibold text-coal">
-              {{ category.name }}
-            </h2>
+              <div v-for="category in visibleCategories" :key="category.id" class="mb-16 last:mb-0">
+                <h2 class="font-display text-3xl font-semibold text-coal">
+                  {{ category.name }}
+                </h2>
 
-            <p
-              v-if="!productsByCategory.get(category.id)?.length"
-              class="mt-4 text-sm text-warmgray"
-            >
-              В этой категории пока нет позиций.
-            </p>
+                <p
+                  v-if="!productsByCategory.get(category.id)?.length"
+                  class="mt-4 text-sm text-warmgray"
+                >
+                  В этой категории пока нет позиций.
+                </p>
 
-            <div v-else class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <ProductCard
-                v-for="(product, i) in productsByCategory.get(category.id)"
-                :key="product.id"
-                :product="product"
-                :adding="addingProductId === product.id"
-                :index="i"
-                @add="handleAddToCart"
-              />
+                <div v-else class="mt-8 grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+                  <ProductCard
+                    v-for="(product, i) in productsByCategory.get(category.id)"
+                    :key="product.id"
+                    :product="product"
+                    :adding="addingProductId === product.id"
+                    :index="i"
+                    @add="handleAddToCart"
+                    @open="viewingProductId = $event"
+                  />
+                </div>
+              </div>
             </div>
+
+            <CartSidebar class="hidden lg:block" />
           </div>
         </div>
       </section>
     </main>
 
     <Footer />
+
+    <ProductQuickViewModal
+      v-if="viewingProductId"
+      :product-id="viewingProductId"
+      @close="viewingProductId = null"
+    />
   </div>
 </template>

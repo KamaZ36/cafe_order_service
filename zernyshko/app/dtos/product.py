@@ -9,6 +9,7 @@ class ResponseProductDTO:
     name: str
     description: str
     weight: str
+    composition: str | None
     category_id: UUID
     price: Decimal
 

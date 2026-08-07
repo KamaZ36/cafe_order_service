@@ -22,6 +22,7 @@ class CreateProductCommand:
     is_available: bool = True
     is_popular: bool = False
     is_new: bool = False
+    composition: str | None = None
     file: FileDTO
 
 
@@ -57,6 +58,7 @@ class CreateProductInteractor:
             is_available=command.is_available,
             is_popular=command.is_popular,
             is_new=command.is_new,
+            composition=command.composition,
         )
 
         file_key = await self._product_service.save_product_image(

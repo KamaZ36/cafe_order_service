@@ -18,6 +18,7 @@ from zernyshko.infrastructure.database.models.order import (  # noqa: F401
     ORDER_ITEM_TABLE,
     ORDER_TABLE,
 )
+from zernyshko.infrastructure.database.models.payment import PAYMENT_TABLE  # noqa: F401
 from zernyshko.infrastructure.database.models.product import PRODUCT_TABLE  # noqa: F401
 from zernyshko.infrastructure.database.models.session import (
     AUTH_SESSION_TABLE,  # noqa: F401

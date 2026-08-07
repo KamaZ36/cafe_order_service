@@ -14,6 +14,7 @@ class OrderType(str, Enum):
 
 
 class OrderStatus(str, Enum):
+    AWAITING_PAYMENT = "AWAITING_PAYMENT"
     PENDING = "PENDING"
     CONFIRMED = "CONFIRMED"
     READY = "READY"
@@ -31,7 +32,7 @@ class Order(CreatedAtMixin):
         desired_time: datetime,
         total_amount: Decimal,
         items: list[OrderItem] | None = None,
-        status: OrderStatus = OrderStatus.PENDING,
+        status: OrderStatus = OrderStatus.AWAITING_PAYMENT,
         delivery_address: str | None = None,
         delivery_entrance: str | None = None,
         delivery_floor: int | None = None,
@@ -116,7 +117,12 @@ class Order(CreatedAtMixin):
     # на любом этапе (не пришёл, нет в наличии, проблема с оплатой).
     # Более узкое правило "только пока PENDING" для самостоятельной отмены
     # клиентом живёт на уровне интерактора, не здесь.
-    _CANCELLABLE_STATUSES = (OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.READY)
+    _CANCELLABLE_STATUSES = (
+        OrderStatus.AWAITING_PAYMENT,
+        OrderStatus.PENDING,
+        OrderStatus.CONFIRMED,
+        OrderStatus.READY,
+    )
 
     def cancel(self, reason: str | None = None) -> None:
         if self._status not in self._CANCELLABLE_STATUSES:
@@ -126,6 +132,14 @@ class Order(CreatedAtMixin):
             )
         self._status = OrderStatus.CANCELLED
         self._cancel_reason = reason
+
+    def mark_paid(self) -> None:
+        if self._status != OrderStatus.AWAITING_PAYMENT:
+            raise InvalidOrderStatusTransition(
+                current_status=self._status.value,
+                target_status=OrderStatus.PENDING.value,
+            )
+        self._status = OrderStatus.PENDING
 
     def confirm(self) -> None:
         if self._status != OrderStatus.PENDING:

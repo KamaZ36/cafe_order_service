@@ -12,14 +12,18 @@ from zernyshko.api.v1.schemas.user import (
     AddItemToCartSchema,
     CreateUserSchema,
     CurrentUserResponseSchema,
+    GetStaffUserListSchema,
+    GetStaffUserPaymentsSchema,
     LoginSchema,
     PhoneLoginSchema,
     ProvisionStaffSchema,
     SendPhoneCodeSchema,
 )
 from zernyshko.app.dtos.cart import ResponseCartDTO
-from zernyshko.app.dtos.order import ResponseOrderListDTO
+from zernyshko.app.dtos.order import CreateOrderResultDTO, ResponseOrderListDTO
 from zernyshko.app.dtos.pagination import Pagination
+from zernyshko.app.dtos.payment import ResponsePaymentListDTO
+from zernyshko.app.dtos.user import ResponseStaffUserDetailDTO, ResponseStaffUserListDTO
 from zernyshko.app.exceptions.auth import RateLimitExceeded
 from zernyshko.app.interactors.cart.add_item_to_cart import (
     AddItemToCartCommand,
@@ -34,6 +38,10 @@ from zernyshko.app.interactors.order.create import (
     CreateOrderCommand,
     CreateOrderInteractor,
 )
+from zernyshko.app.interactors.order.simulate_payment import (
+    SimulateOrderPaymentCommand,
+    SimulateOrderPaymentInteractor,
+)
 from zernyshko.app.interactors.user.cancel_order import (
     CancelOrderCommand,
     CancelOrderInteractor,
@@ -46,6 +54,18 @@ from zernyshko.app.interactors.user.get_current_user import GetCurrentUserIntera
 from zernyshko.app.interactors.user.get_orders import (
     GetOrderListInteractor,
     GetOrderListQuery,
+)
+from zernyshko.app.interactors.user.get_staff_user_detail import (
+    GetStaffUserDetailInteractor,
+    GetStaffUserDetailQuery,
+)
+from zernyshko.app.interactors.user.get_staff_user_list import (
+    GetStaffUserListInteractor,
+    GetStaffUserListQuery,
+)
+from zernyshko.app.interactors.user.get_staff_user_payments import (
+    GetStaffUserPaymentsInteractor,
+    GetStaffUserPaymentsQuery,
 )
 from zernyshko.app.interactors.user.login import LoginCommand, LoginInteractor
 from zernyshko.app.interactors.user.logout import LogoutInteractor
@@ -255,26 +275,47 @@ async def get_own_orders(
 
 @router.post(
     "/@me/orders/pickup",
-    description="Оформить заказ из активной корзины для текущего пользователя",
+    description=(
+        "Оформить заказ из активной корзины для текущего пользователя. "
+        "Возвращает ссылку на оплату — заказ попадёт в очередь персонала "
+        "только после её подтверждения."
+    ),
 )
-async def create_order_from_cart(request: Request, data: CreatePickupOrderSchema) -> None:
+async def create_order_from_cart(
+    request: Request, data: CreatePickupOrderSchema
+) -> CreateOrderResultDTO:
     command = CreateOrderCommand(desired_time=data.desired_time, comment=data.comment)
     async with container(context={Request: request}) as context:
         interactor = await context.get(CreateOrderInteractor)
-        await interactor(command)
+        return await interactor(command)
 
 
 @router.patch(
     "/@me/orders/{order_id}/cancel",
     description=(
-        "Отменить свой заказ. Доступно только пока заказ ещё не подтверждён кафе "
-        "(статус PENDING)."
+        "Отменить свой заказ. Доступно, пока он ещё не оплачен (AWAITING_PAYMENT) "
+        "или пока не подтверждён кафе (PENDING)."
     ),
 )
 async def cancel_own_order(order_id: UUID, request: Request) -> None:
     command = CancelOrderCommand(order_id=order_id)
     async with container(context={Request: request}) as context:
         interactor = await context.get(CancelOrderInteractor)
+        await interactor(command)
+
+
+@router.post(
+    "/@me/orders/{order_id}/simulate-payment",
+    description=(
+        "Тестовое подтверждение оплаты своего заказа, в обход платёжного "
+        "провайдера. Доступно только при debug=True — до подключения "
+        "боевого мерчант-аккаунта ЮKassa."
+    ),
+)
+async def simulate_own_order_payment(order_id: UUID, request: Request) -> None:
+    command = SimulateOrderPaymentCommand(order_id=order_id)
+    async with container(context={Request: request}) as context:
+        interactor = await context.get(SimulateOrderPaymentInteractor)
         await interactor(command)
 
 
@@ -337,3 +378,53 @@ async def provision_staff(
         user_id = await interactor(command)
 
     return JSONResponse(content={"user_id": str(user_id)})
+
+
+@router.get(
+    "",
+    description=(
+        "Список пользователей для админки. Доступно только роли ADMIN — "
+        "здесь видны сессии и платежи, это не общая зона персонала."
+    ),
+)
+async def get_staff_user_list(
+    request: Request, data: GetStaffUserListSchema = Query(...)
+) -> ResponseStaffUserListDTO:
+    query = GetStaffUserListQuery(
+        pagination=Pagination(limit=data.limit, offset=data.offset)
+    )
+    async with container(context={Request: request}) as context:
+        interactor = await context.get(GetStaffUserListInteractor)
+        return await interactor(query)
+
+
+@router.get(
+    "/{user_id}",
+    description=(
+        "Карточка пользователя для админки: роль, сессии, история платежей. "
+        "Доступно только роли ADMIN."
+    ),
+)
+async def get_staff_user_detail(
+    user_id: UUID, request: Request
+) -> ResponseStaffUserDetailDTO:
+    query = GetStaffUserDetailQuery(user_id=user_id)
+    async with container(context={Request: request}) as context:
+        interactor = await context.get(GetStaffUserDetailInteractor)
+        return await interactor(query)
+
+
+@router.get(
+    "/{user_id}/payments",
+    description="История платежей пользователя для админки. Доступно только роли ADMIN.",
+)
+async def get_staff_user_payments(
+    user_id: UUID, request: Request, data: GetStaffUserPaymentsSchema = Query(...)
+) -> ResponsePaymentListDTO:
+    query = GetStaffUserPaymentsQuery(
+        user_id=user_id,
+        pagination=Pagination(limit=data.limit, offset=data.offset),
+    )
+    async with container(context={Request: request}) as context:
+        interactor = await context.get(GetStaffUserPaymentsInteractor)
+        return await interactor(query)

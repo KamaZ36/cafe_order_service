@@ -32,11 +32,12 @@ class CancelOrderInteractor:
         if order is None or order.user_id != user_id:
             raise OrderNotFound(order_id=command.order_id)
 
-        # Самостоятельная отмена клиентом — только пока заведение не начало
-        # готовить заказ. Дальше отменить может только персонал (см.
-        # StaffCancelOrderInteractor) — домен сам по себе разрешает отмену
-        # и из CONFIRMED/READY, это ограничение специфично для клиента.
-        if order.status != OrderStatus.PENDING:
+        # Самостоятельная отмена клиентом — пока не оплачен или пока
+        # заведение не начало готовить заказ. Дальше отменить может только
+        # персонал (см. StaffCancelOrderInteractor) — домен сам по себе
+        # разрешает отмену и из CONFIRMED/READY, это ограничение специфично
+        # для клиента.
+        if order.status not in (OrderStatus.AWAITING_PAYMENT, OrderStatus.PENDING):
             raise InvalidOrderStatusTransition(
                 current_status=order.status.value,
                 target_status=OrderStatus.CANCELLED.value,

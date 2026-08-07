@@ -53,11 +53,18 @@ const verifyCode = async () => {
 // Оформление заказа: самовывоз всегда "сегодня или завтра", вводить дату
 // незачем — просим только время, а дату довычисляем сами (если выбранное
 // время уже прошло — значит это на завтра).
+interface CreateOrderResultDTO {
+  order_id: string
+  payment_confirmation_url: string
+}
+
 const desiredTimeInput = ref('')
 const comment = ref('')
 const orderError = ref('')
 const isSubmitting = ref(false)
 const orderPlaced = ref(false)
+const pendingOrderId = ref<string | null>(null)
+const isPaymentModalOpen = ref(false)
 
 const pad = (value: number) => String(value).padStart(2, '0')
 
@@ -98,20 +105,32 @@ const placeOrder = async () => {
   orderError.value = ''
   isSubmitting.value = true
   try {
-    await $fetch('/api/users/@me/orders/pickup', {
+    const result = await $fetch<CreateOrderResultDTO>('/api/users/@me/orders/pickup', {
       method: 'POST',
       body: {
         desired_time: resolvedDesiredTime.value.toISOString(),
         comment: comment.value || null
       }
     })
-    orderPlaced.value = true
+    pendingOrderId.value = result.order_id
+    isPaymentModalOpen.value = true
     await fetchCart()
   } catch {
     orderError.value = 'Не удалось оформить заказ. Проверьте время самовывоза.'
   } finally {
     isSubmitting.value = false
   }
+}
+
+const onOrderPaid = () => {
+  orderPlaced.value = true
+}
+
+const onPaymentModalClosed = () => {
+  isPaymentModalOpen.value = false
+  // Заказ уже создан независимо от того, оплатили сейчас или закрыли
+  // модалку — просто показываем тот же экран успеха
+  orderPlaced.value = true
 }
 </script>
 
@@ -236,5 +255,12 @@ const placeOrder = async () => {
     </main>
 
     <Footer />
+
+    <OrderPaymentModal
+      v-if="isPaymentModalOpen && pendingOrderId"
+      :order-id="pendingOrderId"
+      @paid="onOrderPaid"
+      @close="onPaymentModalClosed"
+    />
   </div>
 </template>

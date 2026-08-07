@@ -1,3 +1,6 @@
+from typing import AsyncGenerator
+
+import httpx
 from dishka import Provider, Scope, provide
 from redis.asyncio import Redis
 
@@ -7,6 +10,9 @@ from zernyshko.app.services.product import ProductService
 from zernyshko.core.config import settings
 from zernyshko.infrastructure.database.transaction_manager.base import TransactionManager
 from zernyshko.infrastructure.file_storage.base import BaseFileStorage
+from zernyshko.infrastructure.payment.base import PaymentGateway
+from zernyshko.infrastructure.payment.console import ConsolePaymentGateway
+from zernyshko.infrastructure.payment.yookassa import YooKassaPaymentGateway
 from zernyshko.infrastructure.repositories.cart.base import BaseCartRepository
 from zernyshko.infrastructure.repositories.session.base import BaseSessionRepository
 from zernyshko.infrastructure.security.password_hasher import PasswordHasher
@@ -55,3 +61,18 @@ class ServicesProvider(Provider):
     @provide
     def get_product_service(self, file_storage: BaseFileStorage) -> ProductService:
         return ProductService(file_storage)
+
+    @provide(scope=Scope.APP)
+    async def get_yookassa_http_client(self) -> AsyncGenerator[httpx.AsyncClient, None]:
+        async with httpx.AsyncClient(
+            base_url="https://api.yookassa.ru",
+            auth=(settings.yookassa_shop_id, settings.yookassa_secret_key),
+            timeout=10.0,
+        ) as client:
+            yield client
+
+    @provide
+    def get_payment_gateway(self, http_client: httpx.AsyncClient) -> PaymentGateway:
+        if settings.debug:
+            return ConsolePaymentGateway()
+        return YooKassaPaymentGateway(http_client=http_client)

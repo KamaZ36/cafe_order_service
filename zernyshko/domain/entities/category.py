@@ -13,3 +13,6 @@ class Category:
     @property
     def name(self) -> str:
         return self._name
+
+    def set_name(self, name: str) -> None:
+        self._name = name

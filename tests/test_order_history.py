@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from tests.helpers import set_phone_number
+from tests.helpers import pay_latest_order, set_phone_number
 
 
 async def test_order_history_requires_session(client: AsyncClient) -> None:
@@ -29,6 +29,7 @@ async def test_order_history_lists_created_order_with_items(
         "/users/@me/orders/pickup",
         json={"desired_time": "2026-08-10T12:00:00+03:00", "comment": "тест"},
     )
+    await pay_latest_order(client)
 
     response = await client.get("/users/@me/orders")
     assert response.status_code == 200

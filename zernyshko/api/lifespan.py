@@ -5,6 +5,7 @@ from zernyshko.infrastructure.database.models import (  # noqa: F401
     cart,
     category,
     order,
+    payment,
     product,
     session,
     user,

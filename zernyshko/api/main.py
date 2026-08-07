@@ -10,6 +10,7 @@ from zernyshko.api.logging_middleware import RequestLoggingMiddleware
 from zernyshko.api.v1.endpoints import (
     category_router,
     order_router,
+    payment_router,
     product_router,
     user_router,
 )
@@ -25,6 +26,7 @@ def include_router(app: FastAPI) -> None:
     app.include_router(product_router, prefix="/products", tags=["Продукты"])
     app.include_router(category_router, prefix="/categories", tags=["Категории"])
     app.include_router(order_router, prefix="/orders", tags=["Заказы"])
+    app.include_router(payment_router, prefix="/payments", tags=["Платежи"])
 
 
 def create_app() -> FastAPI:

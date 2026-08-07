@@ -35,3 +35,9 @@ class ResponseOrderListDTO:
     total_count: int
     count: int
     orders: list[ResponseOrderForListDTO]
+
+
+@dataclass(frozen=True, eq=False, kw_only=True)
+class CreateOrderResultDTO:
+    order_id: UUID
+    payment_confirmation_url: str

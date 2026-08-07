@@ -13,6 +13,30 @@ async def get_latest_order_id(status: str | None = None) -> str:
         return str(result.scalar_one())
 
 
+async def pay_latest_order(client) -> None:
+    """Симулирует успешную оплату последнего оформленного заказа — дёргает
+    вебхук так же, как это сделала бы ЮKassa после списания денег."""
+    from sqlalchemy import select
+
+    from zernyshko.infrastructure.database.connection import async_session_maker
+    from zernyshko.infrastructure.database.models.payment import PAYMENT_TABLE
+
+    query = (
+        select(PAYMENT_TABLE.c.provider_payment_id)
+        .order_by(PAYMENT_TABLE.c.created_at.desc())
+        .limit(1)
+    )
+    async with async_session_maker() as session:
+        result = await session.execute(query)
+        provider_payment_id = result.scalar_one()
+
+    response = await client.post(
+        "/payments/yookassa/webhook",
+        json={"object": {"id": provider_payment_id}},
+    )
+    response.raise_for_status()
+
+
 async def set_phone_number(client, phone_number: str) -> None:
     """Проходит цепочку отправки/подтверждения кода и привязывает телефон
     к текущей сессии клиента — тестовый хелпер, чтобы не дублировать эти

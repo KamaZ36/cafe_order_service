@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import uuid7
 
 from zernyshko.app.exceptions.auth import AccessDenied
+from zernyshko.app.exceptions.category import CategoryWithNameAlreadyExist
 from zernyshko.domain.entities.category import Category
 from zernyshko.infrastructure.database.transaction_manager.base import TransactionManager
 from zernyshko.infrastructure.identity_provider.base import IdentityProvider
@@ -28,6 +29,10 @@ class CreateCategoryInteractor:
         current_user = await self._identity_provider.get_current_user()
         if not current_user.is_staff():
             raise AccessDenied()
+
+        is_exist = await self._category_repository.check_exist_by_name(command.name)
+        if is_exist:
+            raise CategoryWithNameAlreadyExist()
 
         category = Category(id=uuid7(), name=command.name)
         await self._category_repository.create(category)

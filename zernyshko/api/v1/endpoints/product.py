@@ -46,6 +46,7 @@ async def create_product(
     is_popular: Annotated[bool, Form()],
     is_new: Annotated[bool, Form()],
     file: UploadFile,
+    composition: Annotated[str | None, Form()] = None,
 ) -> ProductResponseSchema:
     if not file.content_type.startswith("image/"):
         raise HTTPException(400, "Файл должен быть картинкой.")
@@ -59,6 +60,7 @@ async def create_product(
         is_available=is_available,
         is_popular=is_popular,
         is_new=is_new,
+        composition=composition,
         file=FileDTO(file=file.file, name=file.filename, size=file.size),
     )
 
@@ -108,6 +110,7 @@ async def update_product(
     is_popular: Annotated[bool, Form()],
     is_new: Annotated[bool, Form()],
     file: Annotated[UploadFile | None, File()] = None,
+    composition: Annotated[str | None, Form()] = None,
 ) -> ProductResponseSchema:
     file_dto = None
     if file is not None and file.filename:
@@ -125,6 +128,7 @@ async def update_product(
         is_available=is_available,
         is_popular=is_popular,
         is_new=is_new,
+        composition=composition,
         file=file_dto,
     )
 

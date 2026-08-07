@@ -15,11 +15,13 @@ class Product:
         is_available: bool = True,
         is_popular: bool = False,
         is_new: bool = False,
+        composition: str | None = None,
     ) -> None:
         self._id = id
         self._name = name
         self._description = description
         self._weight = weight
+        self._composition = composition
         self._category_id = category_id
         self._image = image
         self._price = price
@@ -42,6 +44,10 @@ class Product:
     @property
     def weight(self) -> str:
         return self._weight
+
+    @property
+    def composition(self) -> str | None:
+        return self._composition
 
     @property
     def category_id(self) -> UUID:
@@ -83,6 +89,9 @@ class Product:
 
     def set_weight(self, weight: str) -> None:
         self._weight = weight
+
+    def set_composition(self, composition: str | None) -> None:
+        self._composition = composition
 
     def set_category_id(self, category_id: UUID) -> None:
         self._category_id = category_id

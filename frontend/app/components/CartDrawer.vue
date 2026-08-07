@@ -55,11 +55,13 @@ const goToCheckout = () => {
             <h2 class="font-display text-2xl font-semibold text-coal">Корзина</h2>
             <button
               type="button"
-              class="flex h-8 w-8 items-center justify-center rounded-full text-xl leading-none text-warmgray transition-colors duration-200 hover:bg-coal/5 hover:text-coal"
+              class="flex h-11 w-11 items-center justify-center rounded-full text-warmgray transition-all duration-150 hover:bg-coal/5 hover:text-coal active:scale-90"
               aria-label="Закрыть"
               @click="close"
             >
-              ✕
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
@@ -98,7 +100,7 @@ const goToCheckout = () => {
                   <div class="mt-2 flex items-center gap-3">
                     <button
                       type="button"
-                      class="flex h-8 w-8 items-center justify-center rounded-full border border-coal/20 text-coal transition-all duration-200 hover:border-olive hover:bg-olive/5 active:scale-95 disabled:opacity-50"
+                      class="flex h-11 w-11 items-center justify-center rounded-full border border-coal/20 text-coal transition-all duration-200 hover:border-olive hover:bg-olive/5 active:scale-95 disabled:opacity-50"
                       :disabled="isUpdating === item.product_id"
                       aria-label="Уменьшить количество"
                       @click="changeQuantity(item.product_id, item.quantity - 1)"
@@ -108,7 +110,7 @@ const goToCheckout = () => {
                     <span class="w-6 text-center text-coal">{{ item.quantity }}</span>
                     <button
                       type="button"
-                      class="flex h-8 w-8 items-center justify-center rounded-full border border-coal/20 text-coal transition-all duration-200 hover:border-olive hover:bg-olive/5 active:scale-95 disabled:opacity-50"
+                      class="flex h-11 w-11 items-center justify-center rounded-full border border-coal/20 text-coal transition-all duration-200 hover:border-olive hover:bg-olive/5 active:scale-95 disabled:opacity-50"
                       :disabled="isUpdating === item.product_id"
                       aria-label="Увеличить количество"
                       @click="changeQuantity(item.product_id, item.quantity + 1)"

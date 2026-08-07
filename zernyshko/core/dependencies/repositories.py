@@ -11,6 +11,10 @@ from zernyshko.infrastructure.repositories.order.base import OrderRepository
 from zernyshko.infrastructure.repositories.order.sqlalchemy import (
     SQLAlchemyOrderRepository,
 )
+from zernyshko.infrastructure.repositories.payment.base import PaymentRepository
+from zernyshko.infrastructure.repositories.payment.sqlalchemy import (
+    SQLAlchemyPaymentRepository,
+)
 from zernyshko.infrastructure.repositories.product.base import ProductRepository
 from zernyshko.infrastructure.repositories.product.sqlalchemy import (
     SQLAlchemyProductRepository,
@@ -49,3 +53,7 @@ class RepositoriesProvider(Provider):
     @provide
     def get_auth_session_repository(self, session: AsyncSession) -> BaseSessionRepository:
         return SQLAlchemySessionRepository(session)
+
+    @provide
+    def get_payment_repository(self, session: AsyncSession) -> PaymentRepository:
+        return SQLAlchemyPaymentRepository(session)

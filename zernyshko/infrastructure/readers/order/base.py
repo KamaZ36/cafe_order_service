@@ -15,6 +15,6 @@ class OrderReader(ABC):
 
     @abstractmethod
     async def get_list(
-        self, pagination: Pagination, status: OrderStatus | None = None
+        self, pagination: Pagination, status: list[OrderStatus] | None = None
     ) -> ResponseOrderListDTO:
         raise NotImplementedError()

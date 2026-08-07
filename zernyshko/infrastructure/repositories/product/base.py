@@ -26,5 +26,9 @@ class ProductRepository(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def check_exist_by_category_id(self, category_id: UUID) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def delete(self, product_id: UUID) -> None:
         raise NotImplementedError()

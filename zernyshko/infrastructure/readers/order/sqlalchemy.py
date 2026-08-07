@@ -15,6 +15,8 @@ from zernyshko.infrastructure.database.models.product import PRODUCT_TABLE
 from zernyshko.infrastructure.database.models.user import USER_TABLE
 from zernyshko.infrastructure.readers.order.base import OrderReader
 
+_ACTIVE_STATUSES = (OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.READY)
+
 
 class SQLAlchemyOrderReader(OrderReader):
     def __init__(self, session: AsyncSession) -> None:
@@ -30,14 +32,24 @@ class SQLAlchemyOrderReader(OrderReader):
         )
 
     async def get_list(
-        self, pagination: Pagination, status: OrderStatus | None = None
+        self, pagination: Pagination, status: list[OrderStatus] | None = None
     ) -> ResponseOrderListDTO:
-        filters = [ORDER_TABLE.c.status == status] if status is not None else []
+        if status:
+            filters = [ORDER_TABLE.c.status.in_(status)]
+            # Явный фильтр — это просмотр/история (например, вкладка
+            # «Завершённые»), там ждут недавние записи сверху.
+            order_by = ORDER_TABLE.c.created_at.desc()
+        else:
+            # Без явного фильтра — рабочая очередь персонала: только то, что
+            # ещё требует действия. Неоплаченные (AWAITING_PAYMENT) и уже
+            # закрытые (COMPLETED/CANCELLED) сюда не попадают — иначе при
+            # разделяемом limit старые закрытые заказы вытесняли бы из
+            # выдачи свежие активные.
+            filters = [ORDER_TABLE.c.status.in_(_ACTIVE_STATUSES)]
+            # Очередь — старые необработанные заказы первыми (их обрабатывают по FIFO)
+            order_by = ORDER_TABLE.c.created_at.asc()
         return await self._fetch_orders(
-            filters=filters,
-            # Очередь для персонала — старые необработанные заказы первыми
-            order_by=ORDER_TABLE.c.created_at.asc(),
-            pagination=pagination,
+            filters=filters, order_by=order_by, pagination=pagination
         )
 
     async def _fetch_orders(

@@ -23,6 +23,7 @@ class UpdateProductCommand:
     is_available: bool
     is_popular: bool
     is_new: bool
+    composition: str | None = None
     file: FileDTO | None = None
 
 
@@ -56,6 +57,7 @@ class UpdateProductInteractor:
         product.set_name(command.name)
         product.set_description(command.description)
         product.set_weight(command.weight)
+        product.set_composition(command.composition)
         product.set_category_id(command.category_id)
         product.set_price(command.price)
         product.set_availability(command.is_available)

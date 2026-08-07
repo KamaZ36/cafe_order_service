@@ -40,3 +40,13 @@ class ProvisionStaffSchema(BaseModel):
 class AddItemToCartSchema(BaseModel):
     product_id: UUID
     quantity: int = 1
+
+
+class GetStaffUserListSchema(BaseModel):
+    limit: int = 50
+    offset: int = 0
+
+
+class GetStaffUserPaymentsSchema(BaseModel):
+    limit: int = 50
+    offset: int = 0

@@ -18,6 +18,121 @@ async def test_staff_can_create_and_list_category(staff_client: AsyncClient) -> 
     assert [c["id"] for c in response.json()] == [category["id"]]
 
 
+async def test_create_category_with_duplicate_name_is_rejected(
+    staff_client: AsyncClient,
+) -> None:
+    await staff_client.post("/categories", json={"category_name": "Десерты"})
+
+    response = await staff_client.post("/categories", json={"category_name": "Десерты"})
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "CATEGORY_WITH_NAME_ALREADY_EXIST"
+
+
+async def test_staff_can_rename_category(staff_client: AsyncClient) -> None:
+    created = await staff_client.post("/categories", json={"category_name": "Салаты"})
+    category_id = created.json()["id"]
+
+    response = await staff_client.patch(
+        f"/categories/{category_id}", json={"category_name": "Овощные салаты"}
+    )
+    assert response.status_code == 200
+    assert response.json()["name"] == "Овощные салаты"
+
+    response = await staff_client.get("/categories")
+    names = {c["id"]: c["name"] for c in response.json()}
+    assert names[category_id] == "Овощные салаты"
+
+
+async def test_rename_category_to_existing_name_is_rejected(
+    staff_client: AsyncClient,
+) -> None:
+    await staff_client.post("/categories", json={"category_name": "Супы"})
+    other = await staff_client.post("/categories", json={"category_name": "Гарниры"})
+    other_id = other.json()["id"]
+
+    response = await staff_client.patch(
+        f"/categories/{other_id}", json={"category_name": "Супы"}
+    )
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "CATEGORY_WITH_NAME_ALREADY_EXIST"
+
+
+async def test_rename_category_to_its_own_name_is_a_no_op(
+    staff_client: AsyncClient,
+) -> None:
+    created = await staff_client.post("/categories", json={"category_name": "Соусы"})
+    category_id = created.json()["id"]
+
+    response = await staff_client.patch(
+        f"/categories/{category_id}", json={"category_name": "Соусы"}
+    )
+    assert response.status_code == 200
+
+
+async def test_rename_unknown_category_is_not_found(staff_client: AsyncClient) -> None:
+    response = await staff_client.patch(
+        "/categories/00000000-0000-0000-0000-000000000000",
+        json={"category_name": "Что угодно"},
+    )
+    assert response.status_code == 404
+    assert response.json()["error_code"] == "CATEGORY_NOT_FOUND"
+
+
+async def test_rename_category_requires_staff_role(client: AsyncClient) -> None:
+    response = await client.patch(
+        "/categories/00000000-0000-0000-0000-000000000000",
+        json={"category_name": "Что угодно"},
+    )
+    assert response.status_code == 401
+
+    await client.post("/users", json={"phone_number": "+70000004001"})
+    response = await client.patch(
+        "/categories/00000000-0000-0000-0000-000000000000",
+        json={"category_name": "Что угодно"},
+    )
+    assert response.status_code == 403
+
+
+async def test_staff_can_delete_empty_category(staff_client: AsyncClient) -> None:
+    created = await staff_client.post("/categories", json={"category_name": "Хлеб"})
+    category_id = created.json()["id"]
+
+    response = await staff_client.delete(f"/categories/{category_id}")
+    assert response.status_code == 200
+
+    response = await staff_client.get("/categories")
+    assert category_id not in {c["id"] for c in response.json()}
+
+
+async def test_cannot_delete_category_with_products(
+    staff_client: AsyncClient, category_id: str, product_id: str
+) -> None:
+    response = await staff_client.delete(f"/categories/{category_id}")
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "CATEGORY_HAS_PRODUCTS"
+
+    # категория никуда не делась
+    response = await staff_client.get("/categories")
+    assert category_id in {c["id"] for c in response.json()}
+
+
+async def test_delete_unknown_category_is_not_found(staff_client: AsyncClient) -> None:
+    response = await staff_client.delete(
+        "/categories/00000000-0000-0000-0000-000000000000"
+    )
+    assert response.status_code == 404
+    assert response.json()["error_code"] == "CATEGORY_NOT_FOUND"
+
+
+async def test_delete_category_requires_staff_role(client: AsyncClient) -> None:
+    response = await client.delete("/categories/00000000-0000-0000-0000-000000000000")
+    assert response.status_code == 401
+
+    await client.post("/users", json={"phone_number": "+70000004002"})
+    response = await client.delete("/categories/00000000-0000-0000-0000-000000000000")
+    assert response.status_code == 403
+
+
 async def test_get_product_list_filters_by_category(
     client: AsyncClient, staff_client: AsyncClient, category_id: str, product_id: str
 ) -> None:

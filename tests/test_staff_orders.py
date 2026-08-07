@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from tests.helpers import get_latest_order_id, set_phone_number
+from tests.helpers import get_latest_order_id, pay_latest_order, set_phone_number
 
 
 async def test_get_staff_orders_requires_session(client: AsyncClient) -> None:
@@ -26,6 +26,7 @@ async def test_staff_sees_orders_from_other_customers(
     await client.post(
         "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
     )
+    await pay_latest_order(client)
     order_id = await get_latest_order_id(status="PENDING")
 
     # Своей сессией у бариста этого заказа быть не может — он от другого клиента
@@ -46,6 +47,7 @@ async def test_staff_orders_filter_by_status(
     await client.post(
         "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
     )
+    await pay_latest_order(client)
     order_id = await get_latest_order_id(status="PENDING")
     await staff_client.patch(f"/orders/{order_id}/confirm")
 
@@ -73,6 +75,7 @@ async def test_staff_orders_queue_is_oldest_first(
         await client.post(
             "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
         )
+        await pay_latest_order(client)
         created_ids.append(await get_latest_order_id(status="PENDING"))
 
     response = await staff_client.get("/orders", params={"limit": 50, "offset": 0})
@@ -104,6 +107,7 @@ async def test_staff_can_cancel_pending_order_with_reason(
     await client.post(
         "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
     )
+    await pay_latest_order(client)
     order_id = await get_latest_order_id(status="PENDING")
 
     response = await staff_client.patch(
@@ -111,7 +115,15 @@ async def test_staff_can_cancel_pending_order_with_reason(
     )
     assert response.status_code == 200
 
+    # Отменённый заказ уходит из рабочей очереди и виден только через
+    # явный фильтр по статусу (просмотр истории)
     response = await staff_client.get("/orders", params={"limit": 50, "offset": 0})
+    assert order_id not in {o["id"] for o in response.json()["orders"]}
+
+    response = await staff_client.get(
+        "/orders",
+        params={"limit": 50, "offset": 0, "status": ["COMPLETED", "CANCELLED"]},
+    )
     order = next(o for o in response.json()["orders"] if o["id"] == order_id)
     assert order["status"] == "CANCELLED"
     assert order["cancel_reason"] == "Клиент не отвечает"
@@ -127,6 +139,7 @@ async def test_staff_can_cancel_confirmed_and_ready_order_without_reason(
     await client.post(
         "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
     )
+    await pay_latest_order(client)
     order_id = await get_latest_order_id(status="PENDING")
     await staff_client.patch(f"/orders/{order_id}/confirm")
     await staff_client.patch(f"/orders/{order_id}/ready")
@@ -134,7 +147,10 @@ async def test_staff_can_cancel_confirmed_and_ready_order_without_reason(
     response = await staff_client.patch(f"/orders/{order_id}/cancel")
     assert response.status_code == 200
 
-    response = await staff_client.get("/orders", params={"limit": 50, "offset": 0})
+    response = await staff_client.get(
+        "/orders",
+        params={"limit": 50, "offset": 0, "status": ["COMPLETED", "CANCELLED"]},
+    )
     order = next(o for o in response.json()["orders"] if o["id"] == order_id)
     assert order["status"] == "CANCELLED"
     assert order["cancel_reason"] is None
@@ -150,6 +166,7 @@ async def test_staff_cannot_cancel_completed_order(
     await client.post(
         "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
     )
+    await pay_latest_order(client)
     order_id = await get_latest_order_id(status="PENDING")
     await staff_client.patch(f"/orders/{order_id}/confirm")
     await staff_client.patch(f"/orders/{order_id}/ready")
@@ -158,3 +175,60 @@ async def test_staff_cannot_cancel_completed_order(
     response = await staff_client.patch(f"/orders/{order_id}/cancel")
     assert response.status_code == 409
     assert response.json()["error_code"] == "INVALID_ORDER_STATUS_TRANSITION"
+
+
+async def test_unpaid_order_is_hidden_from_staff_queue_by_default(
+    client: AsyncClient, staff_client: AsyncClient, product_id: str
+) -> None:
+    await client.post(
+        "/users/@me/cart/items", json={"product_id": product_id, "quantity": 1}
+    )
+    await set_phone_number(client, "+70000003009")
+    await client.post(
+        "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
+    )
+    order_id = await get_latest_order_id(status="AWAITING_PAYMENT")
+
+    response = await staff_client.get("/orders", params={"limit": 50, "offset": 0})
+    assert order_id not in {order["id"] for order in response.json()["orders"]}
+
+    response = await staff_client.get(
+        "/orders", params={"limit": 50, "offset": 0, "status": "AWAITING_PAYMENT"}
+    )
+    assert order_id in {order["id"] for order in response.json()["orders"]}
+
+    await pay_latest_order(client)
+
+    response = await staff_client.get("/orders", params={"limit": 50, "offset": 0})
+    assert order_id in {order["id"] for order in response.json()["orders"]}
+
+
+async def test_completed_orders_are_filtered_out_of_the_default_queue(
+    client: AsyncClient, staff_client: AsyncClient, product_id: str
+) -> None:
+    await client.post(
+        "/users/@me/cart/items", json={"product_id": product_id, "quantity": 1}
+    )
+    await set_phone_number(client, "+70000003010")
+    await client.post(
+        "/users/@me/orders/pickup", json={"desired_time": "2026-08-10T12:00:00+03:00"}
+    )
+    await pay_latest_order(client)
+    order_id = await get_latest_order_id(status="PENDING")
+    await staff_client.patch(f"/orders/{order_id}/confirm")
+    await staff_client.patch(f"/orders/{order_id}/ready")
+    await staff_client.patch(f"/orders/{order_id}/complete")
+
+    # Завершённый заказ не занимает место в рабочей очереди...
+    response = await staff_client.get("/orders", params={"limit": 50, "offset": 0})
+    assert response.status_code == 200
+    assert order_id not in {o["id"] for o in response.json()["orders"]}
+
+    # ...но виден через явный фильтр по статусу (просмотр истории)
+    response = await staff_client.get(
+        "/orders",
+        params={"limit": 50, "offset": 0, "status": ["COMPLETED", "CANCELLED"]},
+    )
+    assert response.status_code == 200
+    order = next(o for o in response.json()["orders"] if o["id"] == order_id)
+    assert order["status"] == "COMPLETED"

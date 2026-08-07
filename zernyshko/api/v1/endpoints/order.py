@@ -32,7 +32,12 @@ router = APIRouter()
 
 @router.get(
     "",
-    description="Список всех заказов для персонала кафе (очередь).",
+    description=(
+        "Список заказов для персонала кафе. Без фильтра — рабочая очередь "
+        "(активные, старые первыми). С явным status (можно несколько) — "
+        "просмотр/история, недавние первыми, например "
+        "?status=COMPLETED&status=CANCELLED."
+    ),
 )
 async def get_staff_order_list(
     request: Request, data: GetStaffOrderListSchema = Query(...)

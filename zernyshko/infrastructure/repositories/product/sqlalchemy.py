@@ -39,6 +39,11 @@ class SQLAlchemyProductRepository(ProductRepository):
         result = await self._session.scalar(query)
         return result or False
 
+    async def check_exist_by_category_id(self, category_id: UUID) -> bool:
+        query = select(exists().where(PRODUCT_TABLE.c.category_id == category_id))
+        result = await self._session.scalar(query)
+        return result or False
+
     async def delete(self, product_id: UUID) -> None:
         stmt = delete(PRODUCT_TABLE).where(PRODUCT_TABLE.c.id == product_id)
         await self._session.execute(stmt)

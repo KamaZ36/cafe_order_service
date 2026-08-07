@@ -11,6 +11,7 @@ class ProductResponseSchema(BaseModel):
     name: str
     description: str
     weight: str
+    composition: str | None
     category_id: UUID
     image: str | None
     price: Decimal

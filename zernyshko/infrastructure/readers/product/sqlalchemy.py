@@ -26,6 +26,7 @@ class SQLAlchemyProductReader(ProductReader):
             name=row.name,
             description=row.description,
             weight=row.weight,
+            composition=row.composition,
             category_id=row.category_id,
             price=row.price,
             image=row.image,

@@ -19,7 +19,7 @@ class GetOrderListSchema(BaseModel):
 class GetStaffOrderListSchema(BaseModel):
     limit: int = 50
     offset: int = 0
-    status: OrderStatus | None = None
+    status: list[OrderStatus] | None = None
 
 
 class StaffCancelOrderSchema(BaseModel):

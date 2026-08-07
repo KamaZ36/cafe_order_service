@@ -5,8 +5,12 @@ from zernyshko.infrastructure.readers.cart.base import BaseCartReader
 from zernyshko.infrastructure.readers.cart.sqlalchemy import SQLAlchemyCartReader
 from zernyshko.infrastructure.readers.order.base import OrderReader
 from zernyshko.infrastructure.readers.order.sqlalchemy import SQLAlchemyOrderReader
+from zernyshko.infrastructure.readers.payment.base import PaymentReader
+from zernyshko.infrastructure.readers.payment.sqlalchemy import SQLAlchemyPaymentReader
 from zernyshko.infrastructure.readers.product.base import ProductReader
 from zernyshko.infrastructure.readers.product.sqlalchemy import SQLAlchemyProductReader
+from zernyshko.infrastructure.readers.user.base import UserReader
+from zernyshko.infrastructure.readers.user.sqlalchemy import SQLAlchemyUserReader
 
 
 class ReaderProvider(Provider):
@@ -23,3 +27,11 @@ class ReaderProvider(Provider):
     @provide
     def get_order_reader(self, session: AsyncSession) -> OrderReader:
         return SQLAlchemyOrderReader(session)
+
+    @provide
+    def get_user_reader(self, session: AsyncSession) -> UserReader:
+        return SQLAlchemyUserReader(session)
+
+    @provide
+    def get_payment_reader(self, session: AsyncSession) -> PaymentReader:
+        return SQLAlchemyPaymentReader(session)

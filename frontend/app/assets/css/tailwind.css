@@ -60,6 +60,16 @@
   .admin-nav-link--active {
     @apply border-olive/25 bg-olive/10 text-olive-dark;
   }
+
+  /* Нижний таб-бар админки на мобильном (замена верхней навигации,
+     которая на узком экране не помещается в один ряд) */
+  .admin-bottom-nav-link {
+    @apply flex flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-[11px] font-medium uppercase tracking-wide text-warmgray transition-colors duration-200;
+  }
+
+  .admin-bottom-nav-link--active {
+    @apply text-olive-dark;
+  }
 }
 
 /* Бейдж счётчика корзины: лёгкий "поп" при изменении количества */

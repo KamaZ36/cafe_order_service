@@ -12,3 +12,7 @@ class CategoryResponseSchema(BaseModel):
 
 class CreateCategorySchema(BaseModel):
     category_name: str
+
+
+class UpdateCategorySchema(BaseModel):
+    category_name: str
